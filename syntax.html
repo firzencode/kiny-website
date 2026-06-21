@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiny DSL 语法说明</title>
+<meta name="description" content="Kiny DSL 语法说明：节点、文本、跳转、选项、分支、变量、条件、变体、命令等完整语法规范。">
+<link rel="icon" href="assets/app-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EAD2;--paper-2:#EDE0C2;--paper-3:#F7F0DE;--paper-edge:#E2D2AC;
+    --navy:#1E3A5F;--navy-deep:#16304E;--ink:#23364d;
+    --gold:#C9A24B;--gold-soft:#D4AF6A;--gold-deep:#B8893B;
+    --serif:"Fraunces",Georgia,"Songti SC",serif;
+    --sans:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;font-variant-ligatures:none;font-feature-settings:"liga" 0, "calt" 0;}
+  pre,code{font-variant-ligatures:none;font-feature-settings:"liga" 0, "calt" 0;}
+  a{color:inherit;text-decoration:none;}
+  ::selection{background:var(--gold-soft);color:var(--navy-deep);}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 40px;}
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(244,234,210,.9);backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--paper-edge);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px;}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--serif);font-weight:600;font-size:21px;color:var(--navy-deep);}
+  .brand img{width:34px;height:34px;border-radius:8px;box-shadow:0 3px 10px rgba(30,58,95,.18);}
+  .navlinks{display:flex;gap:10px;align-items:center;font-size:14.5px;font-weight:500;}
+  .navlinks a{padding:7px 15px;border-radius:999px;transition:all .2s;color:#3d4a5e;}
+  .navlinks a:hover{color:var(--gold-deep);}
+  .navlinks a.active{color:var(--gold-deep);}
+  .navlinks a.ghbtn{border:1px solid var(--navy);color:var(--navy);}
+  .navlinks a.ghbtn:hover{background:var(--navy);color:var(--paper-3);}
+
+  .pagehead{background:var(--paper-3);border-bottom:1px solid var(--paper-edge);padding:54px 0 46px;}
+  .pagehead .eyebrow{font-size:12.5px;letter-spacing:.34em;text-transform:uppercase;font-weight:600;color:var(--gold-deep);}
+  .pagehead h1{font-family:var(--serif);font-weight:600;font-size:clamp(32px,4vw,46px);color:var(--navy-deep);margin:14px 0 0;letter-spacing:-.01em;}
+  .pagehead p{color:#4a566a;font-size:18px;margin:14px 0 0;max-width:680px;}
+  .pagehead .back{display:block;width:fit-content;margin-bottom:20px;font-size:14px;color:var(--gold-deep);}
+  .pagehead .back:hover{color:var(--navy-deep);}
+
+  .layout{display:grid;grid-template-columns:248px 1fr;gap:48px;padding:48px 0 100px;}
+  .toc{position:sticky;top:90px;align-self:start;max-height:calc(100vh - 120px);overflow-y:auto;border-left:1px solid var(--paper-edge);padding-left:20px;}
+  .toc-title{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px;}
+  .toc a{display:block;font-size:13.5px;color:#566173;padding:5px 0;line-height:1.4;transition:color .15s;}
+  .toc a:hover{color:var(--gold-deep);}
+
+  article{min-width:0;max-width:780px;}
+  article h1{font-family:var(--serif);font-size:30px;color:var(--navy-deep);margin:0 0 8px;}
+  article h2{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--navy-deep);margin:54px 0 16px;padding-top:26px;border-top:1px solid var(--paper-edge);letter-spacing:-.01em;}
+  article h2:first-of-type{border-top:none;padding-top:0;margin-top:8px;}
+  article h3{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--navy-deep);margin:34px 0 12px;}
+  article h4{font-family:var(--sans);font-weight:600;font-size:16px;color:var(--navy-deep);margin:24px 0 10px;}
+  article p{margin:0 0 16px;text-wrap:pretty;}
+  article ul,article ol{margin:0 0 16px;padding-left:22px;}
+  article li{margin:6px 0;}
+  article code{font-family:var(--mono);font-size:.86em;background:var(--paper-2);color:var(--navy-deep);padding:1.5px 6px;border-radius:5px;}
+  article a{color:var(--gold-deep);border-bottom:1px solid rgba(184,137,59,.35);}
+  article a:hover{border-bottom-color:var(--gold-deep);}
+  article hr{border:none;border-top:1px solid var(--paper-edge);margin:36px 0;}
+  article blockquote{margin:18px 0;padding:14px 20px;background:var(--paper-3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;color:#4a566a;font-size:15px;}
+  article blockquote code{background:var(--paper);}
+
+  .doc-code{margin:0 0 18px;padding:20px 22px;background:var(--navy-deep);color:#d6e2ee;border-radius:12px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.8;box-shadow:0 18px 50px -34px rgba(22,48,78,.6);}
+  .doc-code code{background:none;color:inherit;padding:0;font-size:inherit;}
+
+  .doc-tablewrap{overflow-x:auto;margin:0 0 18px;border:1px solid var(--paper-edge);border-radius:10px;}
+  article table{border-collapse:collapse;width:100%;font-size:14px;background:var(--paper-3);}
+  article th,article td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--paper-edge);vertical-align:top;}
+  article th{background:var(--paper-2);font-weight:600;color:var(--navy-deep);font-family:var(--sans);white-space:nowrap;}
+  article tr:last-child td{border-bottom:none;}
+  article td code{white-space:nowrap;}
+
+  footer{background:var(--paper-2);border-top:1px solid var(--paper-edge);padding:30px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13.5px;color:#7a8394;}
+  footer a{color:#46526a;}footer a:hover{color:var(--gold-deep);}
+
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr;gap:0;}
+    .toc{display:none;}
+    .navlinks a:not(.ghbtn):not(.active){display:none;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
+    <div class="navlinks">
+      <a href="index.html#demo">示例</a>
+      <a class="active" href="syntax.html">语法</a>
+      <a href="about.html">关于</a>
+      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+      <a class="ghbtn" href="https://github.com/firzencode/kiny">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="pagehead">
+  <div class="wrap">
+    <a class="back" href="index.html">← 返回首页</a>
+    <span class="eyebrow">DSL 语法说明</span>
+    <h1>Kiny DSL 语法</h1>
+    <p>用纯文本写互动小说的完整语法规范——节点、文本、跳转、选项、分支、变量、条件、变体与命令。</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="layout">
+    <aside class="toc">
+      <div class="toc-title">目录</div>
+      <a href="#h2">0. 概述</a>
+<a href="#h4">1. 项目结构</a>
+<a href="#h8">2. 节点 (Knot)</a>
+<a href="#h11">3. 普通文本 (Text)</a>
+<a href="#h17">4. 跳转 (Divert)</a>
+<a href="#h20">5. 选项 (Choice)</a>
+<a href="#h26">6. 分支体与汇合 (Branching)</a>
+<a href="#h32">7. 变量与表达式</a>
+<a href="#h40">8. 条件控制 (<code>@if</code>)</a>
+<a href="#h44">9. 文本变体 (Alternatives)</a>
+<a href="#h50">10. 粘连 (Glue)</a>
+<a href="#h53">11. 内置命令 (Command)</a>
+<a href="#h56">12. 函数 (Function)</a>
+<a href="#h58">13. 注释</a>
+<a href="#h59">14. 完整示例</a>
+    </aside>
+    <article>
+      <h1 id="h1">Kiny DSL 规范 v0.1.0 草案</h1>
+<blockquote>状态：<strong>草案 (draft)</strong>，等待逐条审查 文件扩展名：<code>.kin</code> 工具/编辑器名：kiny</blockquote>
+<h2 id="h2">0. 概述</h2>
+<p><strong>Kiny</strong> 是一种受 Ink 启发的互动叙事 DSL，定位是"Ink 的更简洁版本"。设计目标：</p>
+<ol><li><strong>作者优先，不是游戏开发者优先</strong>：砍掉 Ink 中所有游戏引擎集成向的高级特性（list、tunnel、thread、external function、ref 参数）</li><li><strong>中文友好</strong>：节点 ID 仍用 ASCII，但允许中文显示名；错误信息和文档双语</li><li><strong>项目文件夹组织</strong>：元数据集中在 <code>kiny.json</code>，故事文件用 <code>.kin</code> 扩展名</li><li><strong>跨平台</strong>：编辑器和阅读器目标 Windows、Android、Web，后续 iOS、macOS</li></ol>
+<h3 id="h3">0.1 Kiny vs Ink 速查</h3>
+<div class="doc-tablewrap"><table><thead><tr><th>特性</th><th>Ink</th><th>Kiny v0.1.0</th></tr></thead><tbody><tr><td>文件扩展名</td><td><code>.ink</code></td><td><code>.kin</code></td></tr><tr><td>节点声明</td><td><code>=== name</code> 或 <code>=== name ===</code></td><td><code>=== 名字 ===</code>（强制三等号对称）</td></tr><tr><td>节点名</td><td>ASCII 单词，无空格</td><td>任意 Unicode，可中文，但无空格</td></tr><tr><td>变量声明</td><td><code>VAR x = 10</code> <code>CONST PI = 3.14</code> <code>~ temp x</code></td><td><code>~ let x = 10</code> <code>~ const PI = 3.14</code>（JS 语法）</td></tr><tr><td>逻辑语言</td><td>Ink 自有表达式语法</td><td><strong>直接嵌入 JavaScript</strong></td></tr><tr><td>多行逻辑块</td><td><code>{}</code></td><td><code>~~~ ... ~~~</code></td></tr><tr><td>分支收束</td><td>gather 行 <code>-</code> / <code>- -</code></td><td>行首 <code>&gt;</code> 层级标记</td></tr><tr><td>LIST 多值集合</td><td>支持</td><td><strong>不支持</strong></td></tr><tr><td>Tunnel <code>-&gt; x -&gt;</code></td><td>支持</td><td><strong>不支持</strong></td></tr><tr><td>Thread <code>&lt;- x</code></td><td>支持</td><td><strong>不支持</strong></td></tr><tr><td>Ref 参数</td><td><code>ref x</code></td><td><strong>不支持</strong></td></tr><tr><td>文件包含</td><td><code>INCLUDE x.ink</code></td><td>引擎自动扫描项目根，无 <code>INCLUDE</code></td></tr><tr><td>元数据 / 命令</td><td><code># 任意字符串</code> tag，宿主解释</td><td><code>@命令()</code> 封闭内置命令集</td></tr><tr><td>External function</td><td><code>=== function external x ===</code></td><td><strong>不支持</strong>（引擎自行注入）</td></tr><tr><td>文本变体</td><td><code>{a|b}</code> 变体语法（<code>&amp;</code>/<code>!</code>/<code>~</code> 前缀）</td><td><code>seq()</code> / <code>cycle()</code> / <code>once()</code> / <code>shuffle()</code> 内置函数</td></tr></tbody></table></div>
+<hr>
+<h2 id="h4">1. 项目结构</h2>
+<pre class="doc-code"><code>my-story/
+├── kiny.json          # 项目元数据（必需）
+├── main.kin           # 入口故事文件（必需，可改名）
+├── chapters/          # 推荐：故事文件分目录
+│   ├── opening.kin
+│   ├── city.kin
+│   └── ending.kin
+└── assets/            # 可选：图、音、字体
+    ├── images/
+    └── audio/</code></pre>
+<h3 id="h5">1.1 <code>kiny.json</code></h3>
+<p>最小元数据，只保留四个字段：</p>
+<pre class="doc-code"><code>{
+  "name": "雾港之夜",
+  "version": "1.0.0",
+  "engine": "0.1.0",
+  "entry": "main.kin"
+}</code></pre>
+<div class="doc-tablewrap"><table><thead><tr><th>字段</th><th>必需</th><th>说明</th></tr></thead><tbody><tr><td><code>name</code></td><td>✅</td><td>项目名称（可中文）</td></tr><tr><td><code>version</code></td><td>✅</td><td>项目版本，semver 字符串</td></tr><tr><td><code>engine</code></td><td>✅</td><td>要求的 Kiny 引擎版本，semver 字符串</td></tr><tr><td><code>entry</code></td><td>✅</td><td>入口故事文件路径</td></tr></tbody></table></div>
+<p><strong>变量初始化</strong>：所有变量声明都在 <code>.kin</code> 文件里用 <code>~ let</code>/<code>~ const</code>（详见 §7），<code>kiny.json</code> 不参与变量管理。</p>
+<h3 id="h6">1.2 文件发现与命名空间</h3>
+<ul><li><strong>引擎自动递归扫描项目根目录下所有 <code>.kin</code> 文件</strong>，不需要任何显式声明</li><li>所有 <code>.kin</code> 文件共享<strong>同一全局节点命名空间</strong></li><li>节点名在整个项目内必须唯一</li><li>子节点名只在所属父节点内唯一（不同父节点可重名）</li><li>跨父节点跳转子节点用 <code>父节点名.子节点名</code> 路径</li><li>编译器检查重复并报错</li><li>没有 <code>INCLUDE</code> 语句，不需要在文件里声明依赖</li></ul>
+<p>文件夹组织（<code>chapters/</code>、<code>scenes/</code> 等）纯粹是作者的视觉/管理偏好，引擎不关心。</p>
+<h3 id="h7">1.3 入口与开场</h3>
+<p>入口文件（<code>kiny.json</code> 的 <code>entry</code>）中、<strong>第一个 <code>=== 节点 ===</code> 之前的整段内容</strong>构成「开场」：</p>
+<ul><li>开场的作用域为<strong>全局</strong>，从上到下顺序执行——全局声明（<code>~ let</code>/<code>~ const</code>）与正文、命令同处一段，按源码顺序生效。</li><li><strong>故事从开场开始播放</strong>；要进入某个具名场景，开场需以显式 <code>-&gt; 场景名</code> 收尾。</li><li>开场执行到底部若没有跳转即触底 <code>END</code>（与节点一致，但纯文本零-knot 文件触底属正常，不告警；详见 §1）。</li><li>一个<strong>零节点的纯文本文件</strong>本身就是一个完整开场，合法可跑。</li></ul>
+<blockquote>开场没有可书写的节点名——它是引擎据入口文件合成的隐形节点，作者无法 <code>-&gt;</code> 引用它，只能从它跳出去。</blockquote>
+<hr>
+<h2 id="h8">2. 节点 (Knot)</h2>
+<p>节点是故事的最小跳转单位。</p>
+<pre class="doc-code"><code>=== 雾港开场 ===
+雾从港口涌上来，遮住了路灯。
+你站在码头边。
+
+=== 客栈 ===
+你推开了客栈的门，暖气扑面而来。</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>声明形式：<code>=== 名字 ===</code>，<strong>左右必须各 3 个等号</strong>（不接受 2 个或 4 个）</li><li>名字可使用任意 Unicode 非空白字符，<strong>允许中文</strong>，但<strong>不允许包含空格</strong>（任何形式的 whitespace）</li><li>名字前后的空格只用于分隔 <code>===</code>，不属于名字</li><li>名字在<strong>整个项目内全局唯一</strong>（跨所有 <code>.kin</code> 文件）</li><li>节点正文从下一行开始，到下个 <code>===</code> 或 <code>=</code> 或文件结束</li><li>节点之间没有隐式 fallthrough——执行到节点底部如果没有跳转，警告</li></ul>
+<blockquote>名字同时充当节点 ID 与显示名。 多词名字推荐用下划线或直接连写：<code>雾港开场</code>、<code>first_class</code>、<code>头等舱</code>。</blockquote>
+<h3 id="h9">2.1 子节点 (Stitch)</h3>
+<p>复杂节点用 <code>=</code> 切分子节点：</p>
+<pre class="doc-code"><code>=== 火车上 ===
+雾从车窗外掠过。
+-&gt; 头等舱
+
+= 头等舱
+奢华的场景...
+-&gt; END
+
+= 三等舱
+拥挤的场景...
+-&gt; END</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>子节点声明：<code>= 名字</code>，<strong>单个 <code>=</code> 开头，无右侧等号</strong>（跟 knot 的 <code>===</code> 视觉区分）</li><li>名字规则同 knot：允许中文、不允许空格</li><li>子节点名<strong>只在所属父节点内唯一</strong>——不同父节点可以拥有同名子节点</li><li><strong>没有默认入口、没有 fall-through</strong>：进入父节点后只执行父节点正文（从 <code>===</code> 到第一个 <code>=</code> 之间的内容），到达第一个 <code>=</code> 时父节点结束，<strong>不会自动进入任何子节点</strong></li><li>子节点正文从下一行开始，到下个 <code>=</code>、下个 <code>===</code> 或文件结束</li><li>节点底部、子节点底部如无显式跳转 → 警告</li></ul>
+<p><strong>跨父节点跳转子节点的路径</strong>：</p>
+<ul><li>同一父节点内：直接 <code>-&gt; 子节点名</code></li><li>跨父节点：必须用 <code>-&gt; 父节点名.子节点名</code> 路径</li></ul>
+<p><strong>执行示例</strong>：</p>
+<p>输入：</p>
+<pre class="doc-code"><code>=== 父节点 ===
+AAA
+= 子节点1
+BBB
+= 子节点2
+CCC</code></pre>
+<p>执行：进入 <code>父节点</code> → 输出 <code>AAA</code> → 触底无跳转 → 警告（输出仅 <code>AAA</code>）</p>
+<p>输入：</p>
+<pre class="doc-code"><code>=== 父节点 ===
+= 子节点1
+BBB
+= 子节点2
+CCC</code></pre>
+<p>执行：进入 <code>父节点</code> → 父节点正文为空 → 触底无跳转 → 警告（无输出）</p>
+<p>输入：</p>
+<pre class="doc-code"><code>=== 父节点 ===
+-&gt; 子节点1
+
+= 子节点1
+BBB
+-&gt; END</code></pre>
+<p>执行：进入 <code>父节点</code> → 跳转 <code>子节点1</code> → 输出 <code>BBB</code> → 故事结束</p>
+<h3 id="h10">2.2 带参节点</h3>
+<p>节点名后可带参数列表，跳转进入时传入实参，参数即该节点的局部变量：</p>
+<pre class="doc-code"><code>=== 商店(category, discount) ===
+@if {discount &gt; 0}
+&gt; 老板朝你笑了笑，"今天的{category}打折！"
+@else
+&gt; "看看{category}吧。"
+
+* [买下] -&gt; 结账
+* [离开] -&gt; 街道</code></pre>
+<p>进入时用 <code>-&gt; 名字(实参…)</code> 传参（详见 §4.2）：</p>
+<pre class="doc-code"><code>-&gt; 商店("灯笼", 0.8)</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>声明 <code>=== 名字(参数1, 参数2, …) ===</code>：节点名可中文，但<strong>参数是变量，名字必须英文</strong>（ASCII 标识符，同变量规则 §7）</li><li>参数 = 节点局部变量，进入时绑定、离开时销毁，作用域同节点局部（§7.2，含其子节点）</li><li>带参节点就是普通节点：内部可有文本、选项、跳转、<code>@if</code> 等，与无参节点无异</li><li><strong>带参节点只能经 <code>-&gt; 名字(实参)</code> 进入</strong>；不能从外部直接跳进它的子节点（参数无从绑定）。内部子节点之间 <code>-&gt; 子节点</code> 照常，参数仍可见</li><li>无参节点照旧 <code>=== 名字 ===</code> / <code>-&gt; 名字</code>，不变</li></ul>
+<hr>
+<h2 id="h11">3. 普通文本 (Text)</h2>
+<p>节点正文里<strong>所有非控制行</strong>都是普通文本，按顺序输出给读者。</p>
+<h3 id="h12">3.1 行与段落</h3>
+<pre class="doc-code"><code>雾从港口涌上来，遮住了路灯。
+你站在码头边。
+
+你听见远处传来汽笛声。</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>每一行非控制行 = 一段输出</li><li>行末<strong>自动换行</strong></li><li>用 <code>&lt;&gt;</code> 抑制换行（见 §10）</li><li><strong>空行会被忽略</strong>：源文件中可自由插入空行以提升可读性，对输出<strong>完全无影响</strong></li><li>行首、行末的空白被裁掉</li></ul>
+<p><strong>控制行 / 控制块完整清单</strong>——一行若以下列符号起首即为控制结构，否则就是普通文本：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>起首</th><th>含义</th><th>章节</th></tr></thead><tbody><tr><td><code>===</code></td><td>节点声明（可带参 <code>=== 名字(参数) ===</code>）</td><td>§2</td></tr><tr><td><code>=</code></td><td>子节点声明</td><td>§2.1</td></tr><tr><td><code>*</code> / <code>+</code></td><td>选项（一次性 / 粘性）</td><td>§5</td></tr><tr><td><code>&gt;</code></td><td>分支体层级</td><td>§6</td></tr><tr><td><code>-&gt;</code></td><td>跳转（可带参 <code>-&gt; 名字(args)</code>）</td><td>§4</td></tr><tr><td><code>~</code></td><td>单行 JS 语句</td><td>§7</td></tr><tr><td><code>~~~</code></td><td>多行 JS 块（起止行）</td><td>§7.4</td></tr><tr><td><code>@if</code> / <code>@elif</code> / <code>@else</code></td><td>条件控制</td><td>§8</td></tr><tr><td><code>@名字(...)</code></td><td>引擎内置命令</td><td>§11</td></tr><tr><td><code>//</code> / <code>/* */</code></td><td>注释</td><td>§13</td></tr></tbody></table></div>
+<p>行内控制结构（嵌在文本行内，非行首）：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>标记</th><th>含义</th><th>章节</th></tr></thead><tbody><tr><td><code>{ ... }</code></td><td>JS 表达式插值（含三元条件、变体函数）</td><td>§7.5 / §9</td></tr><tr><td><code>&lt;&gt;</code></td><td>粘连（行末）</td><td>§10</td></tr><tr><td><code>-&gt; 目标</code></td><td>行末内联跳转</td><td>§4</td></tr><tr><td><code>// ...</code></td><td>行末注释</td><td>§13</td></tr><tr><td><code>[ ... ]</code> / <code>( ... )</code></td><td>仅选项行内：选项文本分隔 / 选项标签</td><td>§5</td></tr></tbody></table></div>
+<h3 id="h13">3.2 缩进</h3>
+<p>普通文本里的缩进<strong>没有语义</strong>，纯粹是作者的视觉组织手段。下列三种写法等价：</p>
+<pre class="doc-code"><code>你打开门。
+你走进去。</code></pre>
+<pre class="doc-code"><code>    你打开门。
+    你走进去。</code></pre>
+<pre class="doc-code"><code>你打开门。
+    你走进去。</code></pre>
+<blockquote>备注：分支体不依赖缩进，而是用行首 <code>&gt;</code> 标层级（详见 §6）。普通文本里的缩进始终无语义。</blockquote>
+<h3 id="h14">3.3 转义</h3>
+<p>用反斜杠 <code>\</code> 转义，输出其后字符的字面形态。</p>
+<p><strong>任意位置都需转义</strong>（这些符号在行内随处都有特殊含义）：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>写法</th><th>输出</th><th>否则会被当作</th></tr></thead><tbody><tr><td><code>\{</code></td><td><code>{</code></td><td>表达式插值起始</td></tr><tr><td><code>\}</code></td><td><code>}</code></td><td>表达式插值结束</td></tr><tr><td><code>\&lt;</code></td><td><code>&lt;</code></td><td>粘连 <code>&lt;&gt;</code></td></tr><tr><td><code>\/</code></td><td><code>/</code></td><td>注释 <code>//</code>、<code>/*</code>（如 URL <code>http:\//…</code>）</td></tr><tr><td><code>\\</code></td><td><code>\</code></td><td>转义符本身</td></tr></tbody></table></div>
+<p><strong>仅作文本行首字符时需转义</strong>（这些符号只有在行首才是控制标记）：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>写法</th><th>输出</th></tr></thead><tbody><tr><td><code>\=</code> <code>\*</code> <code>\+</code> <code>\&gt;</code> <code>\~</code> <code>\@</code></td><td>对应字面首字符</td></tr><tr><td><code>\-&gt;</code></td><td>行首字面 <code>-&gt;</code></td></tr></tbody></table></div>
+<p><strong>仅选项行内需转义</strong>：选项显示文本里要出现字面 <code>[</code> <code>]</code> <code>(</code> <code>)</code> 时，用 <code>\[</code> <code>\]</code> <code>\(</code> <code>\)</code>。</p>
+<h3 id="h15">3.4 文本中可嵌入的元素</h3>
+<p>文本行内可嵌入以下元素，其余皆为字面文字：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>元素</th><th>写法</th><th>章节</th></tr></thead><tbody><tr><td>表达式插值</td><td><code>{ JS 表达式 }</code></td><td>§7.5</td></tr><tr><td>行内条件</td><td><code>{ cond ? "真" : "假" }</code>（三元，属插值）</td><td>§7.5</td></tr><tr><td>变体（活文本）</td><td><code>{ seq(…) }</code> / <code>{ cycle(…) }</code> / <code>{ once(…) }</code> / <code>{ shuffle(…) }</code></td><td>§9</td></tr><tr><td>行末粘连</td><td><code>&lt;&gt;</code></td><td>§10</td></tr><tr><td>行末跳转</td><td><code>-&gt; 目标</code></td><td>§4</td></tr><tr><td>行末注释</td><td><code>// …</code></td><td>§13</td></tr></tbody></table></div>
+<blockquote><code>@if</code> 条件块、<code>@</code> 命令、<code>~</code> / <code>~~~</code> 逻辑都是<strong>行级</strong>结构，独占整行，不能内联嵌进文本中间。</blockquote>
+<h3 id="h16">3.5 引号与标点</h3>
+<p>引号和各种标点都是<strong>普通字符，没有特殊语法</strong>。中英文标点可以混用：</p>
+<pre class="doc-code"><code>"想要点什么？" 老板问。
+'Hello,' he said.
+"我累了，"我说，"明天再聊吧。"</code></pre>
+<blockquote>Kiny 不强制中英文标点风格，作者自由选择。</blockquote>
+<hr>
+<h2 id="h17">4. 跳转 (Divert)</h2>
+<p>立即跳到另一节点：</p>
+<pre class="doc-code"><code>你走出了房间。
+-&gt; 走廊</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>-&gt; 目标</code> 是跳转</li><li><code>目标</code> 是节点名或子节点名（参见 §2 跨父节点跳转用 <code>父节点名.子节点名</code>）</li><li>跳转后该节点剩余内容不再执行</li></ul>
+<p><strong>跳转的两种放置位置</strong>：</p>
+<p>独立成行：</p>
+<pre class="doc-code"><code>你走出了房间。
+-&gt; 走廊</code></pre>
+<p>嵌在文本末尾（同一行）：</p>
+<pre class="doc-code"><code>你走出了房间。-&gt; 走廊</code></pre>
+<p>两种写法在控制流上完全等价。换行行为（行末跳转后输出是否产生空行）由 §10 粘连规则决定。</p>
+<h3 id="h18">4.1 特殊跳转</h3>
+<ul><li><code>-&gt; END</code> 故事正常结束</li><li><code>-&gt; DONE</code> 当前线程结束（保留给未来扩展，目前等同 END）</li></ul>
+<h3 id="h19">4.2 带参跳转</h3>
+<p>跳转到带参节点（§2.2）时传入实参：</p>
+<pre class="doc-code"><code>-&gt; 商店("灯笼", 0.8)</code></pre>
+<ul><li>实参是 JS 表达式，跳转时求值后绑定到目标节点的参数</li><li>实参个数必须与目标节点的参数个数一致，否则报错</li><li>仍是普通跳转——进入目标后继续在那儿执行，<strong>不返回</strong>调用点</li></ul>
+<hr>
+<h2 id="h20">5. 选项 (Choice)</h2>
+<h3 id="h21">5.1 基本选项</h3>
+<pre class="doc-code"><code>你站在岔路口。
+
+* [走向客栈] -&gt; inn
+* [沿码头继续走] -&gt; docks
+* [原路返回] -&gt; home</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>*</code> 开头 = 一次性选项（选过即消失）</li><li><code>+</code> 开头 = 粘性选项（可重复选）</li><li><code>[文本]</code> 是选项显示的文字</li><li>后面通常跟 <code>-&gt; target</code></li></ul>
+<h3 id="h22">5.2 选项文本与正文文本</h3>
+<p><code>[]</code> 用于分开"选项列表里显示的文字"和"点击后印在正文里的文字"。</p>
+<pre class="doc-code"><code>* [我累了。] "辛苦你了，"他回答。 -&gt; 休息</code></pre>
+<p>读者看到的选项是 <code>我累了。</code>，点击后正文里出现 <code>"辛苦你了，"他回答。</code>，然后跳到 <code>休息</code> 节点。</p>
+<div class="doc-tablewrap"><table><thead><tr><th>写法</th><th>选项显示</th><th>点击后正文显示</th></tr></thead><tbody><tr><td><code>* 文本 -&gt; 目标</code></td><td>"文本"</td><td>"文本"</td></tr><tr><td><code>* [选项文本] -&gt; 目标</code></td><td>"选项文本"</td><td>（无）</td></tr><tr><td><code>* [选项文本] 正文文本 -&gt; 目标</code></td><td>"选项文本"</td><td>"正文文本"</td></tr></tbody></table></div>
+<p><strong>规则</strong>：</p>
+<ul><li><code>[ ... ]</code> 内的文字只在选项列表中显示</li><li><code>]</code> 之后的文字只在点击后的正文里显示</li><li>完全省略 <code>[]</code> 时，整段同时是选项文本和正文文本</li></ul>
+<h3 id="h23">5.3 条件选项</h3>
+<pre class="doc-code"><code>* {gold &gt;= 5} [买下灯笼] -&gt; buy_lantern
+* {met_innkeeper &gt; 0} [问问老板] -&gt; ask_innkeeper
+* [作罢] -&gt; opening</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>{condition}</code> 紧跟在 <code>*</code>/<code>+</code> 之后</li><li>条件为假时该选项不显示</li><li>条件是 JS 表达式（见 §7）</li></ul>
+<h3 id="h24">5.4 后备选项 (Fallback)</h3>
+<p>当其他选项都全部不可用时自动触发，形式仅为 <code>* -&gt; 目标</code>：<strong>无文本、无 <code>[]</code>、无 <code>{}</code> 条件</strong>。</p>
+<pre class="doc-code"><code>* {!tried_a} [尝试 A] -&gt; 试A
+* {!tried_b} [尝试 B] -&gt; 试B
+* -&gt; 没招了</code></pre>
+<p>每组选项最多一个 fallback。</p>
+<h3 id="h25">5.5 选项标签</h3>
+<p>给选项打一个标签后，引擎会<strong>自动追踪该选项被选过的次数</strong>。</p>
+<pre class="doc-code"><code>* (greet) [问候他] "你好。"
+* (ignore) [无视他] 我什么也没说。
+
+"嗯，"他回应。
+
+* {greet} [问他叫什么] -&gt; 问名字
+* [道别] -&gt; 离开</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>(label)</code> 写在 <code>*</code>/<code>+</code> 之后、<code>[</code> 或文本之前</li><li>标签<strong>等价于一个自动计数的全局变量</strong>，其值是该选项被选过的次数（0 = 未选）</li><li>标签<strong>命名必须使用 ASCII 字符</strong>（不允许中文，不允许空格），具体规则与变量一致（详见 §7）</li><li>标签<strong>全局唯一</strong>：不可与其他选项标签、<code>let</code>/<code>const</code> 变量重名</li><li>在后续表达式或条件中用 <code>{label}</code> 读取计数值</li></ul>
+<blockquote>命名约定：节点名/正文允许中文，但<strong>变量名（含选项标签）必须英文</strong>。视觉上一眼就能分辨"叙事内容"和"程序逻辑"。</blockquote>
+<hr>
+<h2 id="h26">6. 分支体与汇合 (Branching)</h2>
+<p>选项被选中后执行的"分支体"用行首 <code>&gt;</code> 表层级。<code>&gt;</code> 的数量 = 嵌套层级；层级减少 = 内层分支自动汇合到外层。</p>
+<h3 id="h27">6.1 基本写法</h3>
+<pre class="doc-code"><code>=== 路口 ===
+"什么事？" 我问。
+
+* [我累了。]
+&gt; "辛苦你了。"
+* [没什么。]
+&gt; "好吧。"
+* [假装没听见。]
+&gt; 我什么也没做。
+
+我们继续前行。
+-&gt; END</code></pre>
+<ul><li><code>*</code> 选项行后紧跟的 <code>&gt; ...</code> 行构成"该选项的分支体"</li><li>三个选项体执行完毕后，遇到无 <code>&gt;</code> 的 <code>我们继续前行。</code>——<strong>自动汇合</strong>，所有分支都执行后续内容</li></ul>
+<h3 id="h28">6.2 嵌套</h3>
+<pre class="doc-code"><code>=== 餐厅 ===
+"你想吃什么？"
+
+* [吃米饭]
+&gt; 你点了米饭。
+&gt; "需要什么菜？"
+&gt; * [青菜]
+&gt; &gt; 你点了青菜。
+&gt; * [肉]
+&gt; &gt; 你点了肉。
+&gt; 服务员记下了。
+* [吃面]
+&gt; 你点了面。
+
+"好嘞，"服务员说。
+-&gt; END</code></pre>
+<ul><li>第一层 <code>&gt;</code> 是顶层选项的体</li><li>第二层 <code>&gt; &gt;</code> 是嵌套子选项的体</li><li>层级从 <code>&gt; &gt;</code> 回到 <code>&gt;</code> = 内层（子选项）汇合到外层（"服务员记下了。"）</li><li>层级回到 0（无 <code>&gt;</code>） = 整个选项组结束，所有分支汇合（"好嘞，服务员说。"）</li></ul>
+<p><strong>建议</strong>：嵌套不要超过 3 层，可读性会崩。</p>
+<h3 id="h29">6.3 语法细节</h3>
+<div class="doc-tablewrap"><table><thead><tr><th>规则</th><th>说明</th></tr></thead><tbody><tr><td>行首 <code>&gt;</code> 数量</td><td>决定该行所属层级</td></tr><tr><td>行首空白</td><td>解析时被裁掉。<strong>强烈建议不要前导空白</strong></td></tr><tr><td><code>&gt;</code> 之间空白</td><td>可选，<code>&gt;&gt;&gt;</code> 与 <code>&gt; &gt; &gt;</code> 等价。<strong>强烈建议加空格</strong>，并与 <code>*</code> 对齐</td></tr><tr><td><code>&gt;</code> 之后空白</td><td>可选，<code>&gt;体</code> 与 <code>&gt; 体</code> 等价。<strong>强烈建议加空格</strong>，便于阅读</td></tr><tr><td>行首字面 <code>&gt;</code></td><td>用 <code>\&gt;</code> 转义</td></tr></tbody></table></div>
+<h3 id="h30">6.4 分支体与显式跳转混用</h3>
+<p>选项可以<strong>不带 <code>&gt;</code> 体</strong>直接 <code>-&gt; 目标</code> 跳走；也可以<strong>有 <code>&gt;</code> 体并在体内显式跳走</strong>。两种"跳走"都使该选项<strong>不参与汇合</strong>：</p>
+<pre class="doc-code"><code>* [回家] -&gt; 家中            ← 直接跳走，不汇合
+* [等等]
+&gt; 等了又等。                 ← 体结束后自动汇合
+* [离开]
+&gt; 转身就走。
+&gt; -&gt; 街上                    ← 体内显式跳走，不汇合
+
+都白等了。                   ← 只有"等等"会到这里</code></pre>
+<h3 id="h31">6.5 空行</h3>
+<p><code>&gt;</code> 体中的空行被忽略（同 §3.1）。下列三种写法等价：</p>
+<pre class="doc-code"><code>* [选 A]
+&gt; 第一段。
+&gt; 第二段。</code></pre>
+<pre class="doc-code"><code>* [选 A]
+&gt; 第一段。
+
+&gt; 第二段。</code></pre>
+<pre class="doc-code"><code>* [选 A]
+&gt; 第一段。
+&gt;
+&gt; 第二段。</code></pre>
+<hr>
+<h2 id="h32">7. 变量与表达式</h2>
+<p>Kiny 的所有逻辑都是 <strong>JavaScript</strong>。Kiny 不发明自己的表达式语言，而是把 JS 以三种方式嵌入故事文本：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>写法</th><th>含义</th><th>输出</th></tr></thead><tbody><tr><td><code>~ 单行 JS 语句</code></td><td>执行一条 JS 语句（声明、赋值、调用）</td><td>无</td></tr><tr><td><code>~~~ ... ~~~</code></td><td>多行 JS 块</td><td>无</td></tr><tr><td><code>{ JS 表达式 }</code></td><td>求值并插入文本</td><td>求值结果转字符串</td></tr></tbody></table></div>
+<p>变量名必须 ASCII（字母、数字、下划线，首字符非数字），跟 JS 标识符规则一致。</p>
+<p>内置函数名（<code>random</code>、<code>seed_random</code>、<code>turns</code>、<code>turns_since</code>、<code>seq</code>、<code>cycle</code>、<code>once</code>、<code>shuffle</code>，见 §12.1）是<strong>保留标识符</strong>，不可用作变量名、参数名或选项标签，编译期报错。</p>
+<h3 id="h33">7.1 变量声明</h3>
+<p>用 JS 的 <code>let</code> 和 <code>const</code>：</p>
+<pre class="doc-code"><code>~ let gold = 10
+~ let has_lantern = false
+~ let player_name = "无名氏"
+~ let player = { name: "无名氏", hp: 100 }
+
+~ const MAX_HP = 100
+~ const INTRO_LINE = "雾港之夜"</code></pre>
+<ul><li><code>let</code> 声明可变变量，<code>const</code> 声明常量</li><li>拼错变量名会立即报错（不会沉默地创造新变量）</li></ul>
+<h3 id="h34">7.2 作用域</h3>
+<p>变量按声明位置划分两个作用域：</p>
+<p><strong>全局作用域</strong>——文件顶部、任何节点之前的声明：</p>
+<pre class="doc-code"><code>~ let gold = 10            ← 全局，整个故事都可见
+~ const MAX_HP = 100
+
+=== 开场 ===
+...</code></pre>
+<p>入口文件首个节点前的这段内容即「开场」（见 §1.3）：全局声明与开场正文同处一段，按源码顺序执行，声明落全局、后续任意节点可见。</p>
+<p><strong>节点作用域</strong>——节点内部的声明，跳出节点时失效：</p>
+<pre class="doc-code"><code>=== 战斗 ===
+~ let dice = random(1, 6)   ← 只在本节点（含其子节点）可见
+{ dice &gt; 3: 你打中了！ }</code></pre>
+<p>节点（含其所有子节点）等价于一个 JS 函数作用域：进入节点时建立局部作用域，离开节点时销毁。</p>
+<h3 id="h35">7.3 赋值与运算</h3>
+<p>声明后用普通 JS 语法赋值：</p>
+<pre class="doc-code"><code>~ gold = 5
+~ gold += 1
+~ gold--
+~ player.hp -= 10
+~ player.name = "Alice"
+~ inventory.push("药水")</code></pre>
+<p>完整支持 JS 的赋值/算术/比较/逻辑运算符。</p>
+<h3 id="h36">7.4 多行 JS 块</h3>
+<p>复杂逻辑（多语句、循环、复杂初始化）用 <code>~~~ ... ~~~</code>：</p>
+<pre class="doc-code"><code>~~~
+let total = 0
+for (const item of inventory) {
+  total += item.price
+}
+gold = total
+~~~</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>起止 <code>~~~</code> 各占一行（不接受 <code>~~~~</code> 等其他长度）</li><li>块内是任意 JS 代码</li><li>块内<strong>不能嵌入 Kiny 语法</strong>（<code>-&gt;</code> 跳转、<code>* [选项]</code>、<code>{ ... }</code> 插值等）</li><li>副作用（赋值、函数调用）正常生效，但<strong>不产生 Kiny 文本输出</strong></li><li><code>~~~</code> 块只能出现在<strong>节点 / 子节点正文顶层</strong>，不能写进选项体或 <code>@if</code> 分支体内；分支体内需要多行逻辑时，在顶层 <code>~~~</code> 里定义函数，分支内用单行 <code>~ f()</code> 调用</li></ul>
+<h3 id="h37">7.5 表达式插值</h3>
+<p>文本中嵌入 <code>{ JS 表达式 }</code>，求值后插入：</p>
+<pre class="doc-code"><code>你还剩 {gold} 枚金币。
+{player.name} 抬起头。
+你的攻击力是 {strength * 2}。
+你的状态：{ player.hp &gt; 50 ? "良好" : "虚弱" }。</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><strong><code>{ }</code> 在 Kiny 中只有这一种含义：求值一段 JS 表达式，输出其字符串</strong>（行内条件用三元、活文本用变体函数，都只是表达式的具体形态，不是另一套语法）</li><li><code>{ 表达式 }</code> 内是任意 JS 表达式（不是语句）</li><li>结果转字符串后插入；<code>undefined</code> / <code>null</code> 输出为空字符串</li><li>表达式里引用未声明的变量 → 编译时报错</li></ul>
+<h3 id="h38">7.6 跨文件共享</h3>
+<p>所有 <code>.kin</code> 文件的 <code>~</code> 与 <code>~~~</code> 共享同一全局 JS 作用域：</p>
+<ul><li>文件顶部的 <code>let</code> / <code>const</code> 在所有文件可见</li><li>同名变量跨文件重复声明 → 报错</li><li>引擎按文件名字典序合并所有全局声明</li></ul>
+<h3 id="h39">7.7 边界</h3>
+<ul><li><code>~ -&gt; 节点</code> <strong>不允许</strong>：跳转独立成行用 <code>-&gt; 节点</code></li><li>JS 单行注释 <code>// ...</code> 可写在 <code>~</code> 行末</li><li><code>~~~</code> 块内不能再嵌套 <code>~~~</code>（不支持嵌套块）</li></ul>
+<hr>
+<h2 id="h40">8. 条件控制 (<code>@if</code>)</h2>
+<p>条件控制用 <code>@</code> 前缀的指令行表达。<code>@</code> 是 Kiny 的控制流命名空间，与 <code>~</code>（纯 JS 语句）、<code>{}</code>（产出文本的 JS 表达式）互不重叠。</p>
+<p>行内的单点条件直接用 JS 三元表达式（§7.5），例如 <code>你的灯笼{has_lantern ? "亮着" : "熄灭"}</code>。本章只讲跨行、包住整段叙事的条件块。</p>
+<h3 id="h41">8.1 基本写法</h3>
+<pre class="doc-code"><code>@if {met_innkeeper === 0}
+&gt; 这是你第一次见他。
+@elif {met_innkeeper &lt; 3}
+&gt; 你们算是脸熟了。
+@else
+&gt; 老朋友似的，他朝你点头。
+
+"想要点什么？"</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>@if</code> / <code>@elif</code> / <code>@else</code> 是控制流选择器行，行首顶格（与同层选项 <code>*</code> 处于同一层级）</li><li>条件写在 <code>{ }</code> 里，是一段 JS 表达式（§7.5）——凡 Kiny 需要表达式之处，一律用 <code>{ }</code></li><li>选择器行后紧跟的 <code>&gt;</code> 行构成该分支的 body，层级与选项体共用同一套 <code>&gt;</code> 计数（§6）</li><li><strong>没有结束符</strong>：当某行回到选择器所在层级、且不是 <code>@elif</code> / <code>@else</code> 时，整个条件链结束，所有分支汇合到外层</li><li><code>@elif</code> 可出现任意多次（含零次）；<code>@else</code> 至多一个，且必须是链尾</li><li><code>@if</code> 必须最先出现，<code>@elif</code> / <code>@else</code> 只能紧跟在同层 <code>@if</code> / <code>@elif</code> 之后</li></ul>
+<h3 id="h42">8.2 body 内执行语句</h3>
+<p>body 里要执行 JS（赋值、调用）就用 <code>&gt;</code> 加 <code>~</code>：</p>
+<pre class="doc-code"><code>@if {gold &gt;= 5}
+&gt; ~ gold -= 5
+&gt; 你接过酒杯，喝了一口。
+@else
+&gt; 钱不够，你摇了摇头。</code></pre>
+<p>多行逻辑用 <code>~~~ … ~~~</code>（§7.4）。<code>{ }</code> 永远只产出文本，绝不承载语句。</p>
+<h3 id="h43">8.3 与选项嵌套</h3>
+<p><code>@if</code> 与选项 <code>*</code> 共享同一套 <code>&gt;</code> 层级，可任意互嵌；<code>&gt;</code> 的个数 = 总嵌套深度：</p>
+<pre class="doc-code"><code>* [冲上去战斗]
+&gt; @if {hp === 0}
+&gt; &gt; 你还没动手就倒下了。
+&gt; &gt; -&gt; game_over
+&gt; @else
+&gt; &gt; 你举起了剑。
+&gt; 周围安静下来。            ← 回到选项体内（if 链已闭合）
+
+我们继续赶路。              ← 回到顶层（选项组也结束了）</code></pre>
+<p><strong>建议</strong>：嵌套不超过 3 层（同 §6）。</p>
+<hr>
+<h2 id="h44">9. 文本变体 (Alternatives)</h2>
+<p>"活文本"——同一处文字随访问次数变化——由四个内置函数实现，写在 <code>{ }</code> 里就是普通 JS 函数调用。引擎按<strong>源码位置</strong>为每个调用点挂一个独立计数器，自动记录它被经过的次数，作者无需手动维护变量。</p>
+<p>变体不引入任何新语法：<code>{ }</code> 始终只是"一段 JS 表达式"（§7.5），这四个函数只是 §12.1 内置函数的一部分。</p>
+<h3 id="h45">9.1 <code>seq</code> —— 依次推进，停在最后</h3>
+<pre class="doc-code"><code>随后我听见钟声{ seq("响了", "又响了", "这回听起来很远了") }。</code></pre>
+<p>第 1 次到达输出"响了"，第 2 次"又响了"，第 3 次起固定停在最后一项。</p>
+<h3 id="h46">9.2 <code>cycle</code> —— 循环</h3>
+<pre class="doc-code"><code>今天是{ cycle("周一","周二","周三","周四","周五","周六","周日") }。</code></pre>
+<p>到达末项后回到第一项，循环往复。</p>
+<h3 id="h47">9.3 <code>once</code> —— 用完为空</h3>
+<pre class="doc-code"><code>他笑了。{ once("这是我第一次见他笑。", "这次他笑得更开了。") }</code></pre>
+<p>依次输出各项，全部用完后返回空字符串。</p>
+<h3 id="h48">9.4 <code>shuffle</code> —— 随机</h3>
+<pre class="doc-code"><code>风吹过。{ shuffle("你打了个寒颤。", "你拉紧了衣领。", "你忽然觉得有什么不对。") }</code></pre>
+<p>每次随机返回一项，随机序列受 <code>seed_random</code> 控制以保证可复现（§12.1）。</p>
+<h3 id="h49">9.5 组合与嵌套</h3>
+<p>变体函数就是普通 JS 表达式，可与三元、插值、彼此自由组合：</p>
+<pre class="doc-code"><code>那只{ cycle("小狗","大狗") }{ has_treat ? "摇了摇尾巴" : "吠了一声" }。</code></pre>
+<blockquote><strong>注意</strong>：作为函数实参的嵌套变体会被<strong>立即求值</strong>。如 <code>cycle("小狗", shuffle("黑狗","花狗"))</code> 中，<code>shuffle(...)</code> 每次都会先求值并推进自己的计数器，即便这一轮 cycle 没轮到它。若要"轮到才求值"，传惰性函数 <code>() =&gt; shuffle(...)</code>。嵌套变体本就罕见，一般直接接受立即求值即可。</blockquote>
+<hr>
+<h2 id="h50">10. 粘连 (Glue)</h2>
+<p>Kiny 默认每段文本输出后自动换行（§3.1）。<code>&lt;&gt;</code> 紧贴在一段文本的<strong>末尾</strong>，取消这段文本之后的换行，让下一段产出的文本直接贴上来——<strong>即使中间隔着一次 <code>-&gt;</code> 跳转</strong>：</p>
+<pre class="doc-code"><code>我转身离开&lt;&gt;
+-&gt; next_room
+
+=== next_room ===
+，头也不回。</code></pre>
+<p>输出：<code>我转身离开，头也不回。</code></p>
+<h3 id="h51">10.1 <code>&lt;&gt;</code> 与 <code>-&gt;</code> 的位置</h3>
+<p><code>-&gt;</code> 是跳转指令、不产出文本，所以 <code>&lt;&gt;</code> 永远贴在<strong>文本</strong>一侧，不贴在 <code>-&gt;</code> 上。两种等价写法：</p>
+<pre class="doc-code"><code>我转身离开&lt;&gt;
+-&gt; next_room</code></pre>
+<pre class="doc-code"><code>我转身离开&lt;&gt; -&gt; next_room</code></pre>
+<ul><li>跳转独立成行时，<code>&lt;&gt;</code> 落在<strong>文本行末尾</strong>（<code>-&gt;</code> 在下一行）</li><li>跳转内联时，<code>&lt;&gt;</code> 夹在<strong>文本与 <code>-&gt;</code> 之间</strong>：<code>文本&lt;&gt; -&gt; 目标</code></li><li><code>-&gt; 目标</code> 之后不写 <code>&lt;&gt;</code>（跳转后本行已无文本可粘，无意义）</li></ul>
+<h3 id="h52">10.2 规则</h3>
+<ul><li><code>&lt;&gt;</code> 紧贴它要粘连的那段文本之后，含义："这段文本之后不换行，下一段输出紧贴上来"</li><li>粘连<strong>跨越 <code>-&gt;</code> 跳转</strong>：会把跳转目标的第一段文本接上来，目标节点一侧无需任何标记</li><li>缝句一律在<strong>源头一侧</strong>声明；若某节点被多个入口共享、想统一缝句，需在每个入口各加一个 <code>&lt;&gt;</code></li><li>没有行首 <code>&lt;&gt;</code>；要输出字面 <code>&lt;</code> 用 <code>\&lt;</code>（§3.3）</li></ul>
+<hr>
+<h2 id="h53">11. 内置命令 (Command)</h2>
+<p>引擎内置命令用 <code>@</code> 前缀、函数调用形式书写，向宿主（编辑器/阅读器）下达副作用指令（切背景、放音乐等）。命令独占一行，不产出叙事文本。</p>
+<pre class="doc-code"><code>=== inn ===
+@bg_show("assets/tavern_interior.jpg")
+@bgm_play("assets/tavern_loop.mp3")
+
+老板抬起头看着你。
+
+"想要点什么？"</code></pre>
+<h3 id="h54">11.1 当前命令集</h3>
+<div class="doc-tablewrap"><table><thead><tr><th>命令</th><th>说明</th></tr></thead><tbody><tr><td><code>@bg_show(image)</code></td><td>显示背景图</td></tr><tr><td><code>@bg_hide()</code></td><td>隐藏背景图</td></tr><tr><td><code>@bgm_play(audio)</code></td><td>播放背景音乐</td></tr><tr><td><code>@bgm_pause()</code></td><td>暂停背景音乐</td></tr><tr><td><code>@bgm_stop()</code></td><td>停止背景音乐</td></tr></tbody></table></div>
+<blockquote>当前仅这几个，后续按需补充（立绘、音效、语音、情绪、转场等）。</blockquote>
+<h3 id="h55">11.2 规则</h3>
+<ul><li><code>@命令(参数)</code> 独占一行，行首顶格（与 <code>@if</code> 同属 <code>@</code> 引擎指令命名空间）</li><li>参数是 JS 表达式，引擎求值后随命令传给宿主——动态参也可以，如 <code>@bg_show(currentBg)</code></li><li>命令是副作用指令，<strong>不产出任何叙事文本</strong></li><li>引擎只认识内置命令集；未知的 <code>@命令(...)</code> 报错</li><li>资源参数是<strong>项目根相对路径</strong>（如 <code>"assets/harbor_fog.jpg"</code>），宿主据此从项目根解析；<code>assets/</code> 只是惯例目录，非硬规则</li></ul>
+<hr>
+<h2 id="h56">12. 函数 (Function)</h2>
+<p>Kiny 不提供自己的函数声明语法。逻辑即 JavaScript，函数就用 JS 定义——写在 <code>~~~ … ~~~</code> 块（§7.4）或 <code>~</code> 行里，在 <code>{ }</code> 中取值、在 <code>~</code> 行中调用：</p>
+<pre class="doc-code"><code>~~~
+function describe_health(x) {
+  if (x === 100) return "健康"
+  if (x &gt; 75) return "不错"
+  return "虚弱"
+}
+
+function add_gold(amount) {
+  gold += amount
+}
+~~~
+
+Monsieur Fogg 看起来{ describe_health(hp) }。</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li>用 JS 的 <code>function</code> 或箭头函数声明，<code>return</code> 返回值</li><li>取文本用 <code>{ describe_health(hp) }</code>，纯副作用用 <code>~ add_gold(10)</code></li><li>完整支持 JS 函数特性：默认参数、递归、闭包等</li><li>函数定义跨文件共享同一全局 JS 作用域（§7.6），函数名与变量名全局唯一</li><li>需要"可复用、带参、含分支的<strong>叙事段</strong>"用带参节点（§2.2），不是函数</li></ul>
+<h3 id="h57">12.1 内置函数</h3>
+<p>纯数学 / 类型转换直接用 JS（<code>Math.trunc</code>、<code>Math.floor</code>、<code>parseFloat</code>、<code>**</code> 等）。内置函数只保留 JS 拿不到的引擎能力：</p>
+<div class="doc-tablewrap"><table><thead><tr><th>函数</th><th>说明</th></tr></thead><tbody><tr><td><code>random(min, max)</code></td><td>返回 <code>[min, max]</code> 闭区间随机整数（可复现，受 <code>seed_random</code> 控制）</td></tr><tr><td><code>seed_random(n)</code></td><td>设置随机种子</td></tr><tr><td><code>turns()</code></td><td>当前总回合数</td></tr><tr><td><code>turns_since("节点名")</code></td><td>距离上次访问该节点的回合数（未访问返回 -1）</td></tr><tr><td><code>seq(...items)</code></td><td>变体：依次返回各项，停在最后一项（§9.1）</td></tr><tr><td><code>cycle(...items)</code></td><td>变体：循环返回各项（§9.2）</td></tr><tr><td><code>once(...items)</code></td><td>变体：依次返回，用完返回空串（§9.3）</td></tr><tr><td><code>shuffle(...items)</code></td><td>变体：随机返回一项，受 <code>seed_random</code> 控制（§9.4）</td></tr></tbody></table></div>
+<blockquote>变体函数 <code>seq</code> / <code>cycle</code> / <code>once</code> / <code>shuffle</code> 按源码位置自动维护各自的访问计数，是"活文本"的实现（详见 §9）。</blockquote>
+<blockquote>上述内置函数名均为<strong>保留标识符</strong>，作者不可用作变量名 / 参数名 / 选项标签（§7）。</blockquote>
+<blockquote><strong>跟 Ink 的对比</strong>：去掉 <code>CHOICE_COUNT()</code>、<code>LIST_*</code> 系列。<code>CHOICE_COUNT()</code> 用得少；<code>LIST_*</code> 是 LIST 特性，本规范不支持 LIST。</blockquote>
+<hr>
+<h2 id="h58">13. 注释</h2>
+<pre class="doc-code"><code>// 单行注释
+
+/*
+多行注释
+*/</code></pre>
+<p><strong>规则</strong>：</p>
+<ul><li><code>//</code> 单行注释</li><li><code>/* ... */</code> 多行注释</li></ul>
+<hr>
+<h2 id="h59">14. 完整示例</h2>
+<p>《雾港之夜》——一篇验明真伪的短篇解谜，集中示范本规范的主要语法面：开局 <code>random</code> 加计数/布尔变量（§8）、知识门控的条件选项 <code>{...}</code>（§6）、<code>@if/@else</code> 分支叙述与分支体内 <code>~</code> 语句（§8）、节点循环跳转与多结局分流、<code>once()</code> / <code>shuffle()</code> 变体（§9），以及命令 <code>@bg_show</code> / <code>@bg_hide</code> / <code>@bgm_play</code>（§11）。</p>
+<blockquote>接头人真伪由开局 <code>~ let imposter = random(0, 1)</code> 决定。引擎 PRNG 默认种子固定（§9），故纯 <code>.kin</code> 单独运行时身份恒定；要让每次游玩随机，由宿主在创建 Story 时注入真随机种子（<code>createStory(program, { start, seed })</code>，见 <code>engine-packaging-spec</code>）。</blockquote>
+<pre class="doc-code"><code>// 雾港之夜 —— main.kin
+// 架空工业王国「格兰瑟姆联合王国」· 港口城雾港的一个夜晚。
+// 你是以太工程院的人，要把一张魔法机关设计图交给接头人「灰隼」。
+// 可风声走漏，来的人未必是真灰隼。先验明真伪，再决定交不交。
+// 玩法：开局随机定对方真伪；线索靠收集解锁；四结局 = 身份 × 你的决断。
+
+~ let imposter = random(0, 1)   // 1 = 冒充者，0 = 真灰隼（开局随机，由宿主种子驱动）
+~ let suspicion = 0             // 已看出的疑点数（用于结局风味）
+~ let asked = 0                 // 已盘问的核验数；四选三，满 3 个对方警觉、不再受盘问
+~ let know_geo = false          // 看过地图：格雷斯顿深居内陆、不近海
+~ let know_seal = false         // 读过手册：认得行会符印遇火泛灰光（真伪都泛，验它无从分辨）
+~ let know_compass = false      // 聊过天气：雾里以太作怪、罗盘乱转
+~ let know_mark = false         // 问过老板来历：格雷斯顿人打小打铁、手上带铁匠的印记
+-&gt; 码头开场
+
+=== 码头开场 ===
+@bg_show("assets/harbor_fog.jpg")
+@bgm_play("assets/ambient_fog.mp3")
+
+末班蒸汽船把你卸在雾港的栈桥上，锅炉的余温还贴在背后，转眼就被夜雾吞了。
+雾是活的——格兰瑟姆人这么说。码头的煤气灯一盏盏亮着，可光只走出半臂远就被雾喝掉，剩下一圈昏黄悬在半空。
+岸边立着几根驱雾的盐铁桅，铁锈味混着海腥，咸得发苦。
+雾里不知哪儿传来一声汽笛，{ shuffle("闷在水汽里", "像隔着一床湿棉被", "辨不出是进港还是出港") }。
+
+怀里那只以太蜡封的铜管硌着肋骨——那是以太工程院的心血，一张魔法机关的设计图。今夜你要在码头边的锈锚酒馆，把它交给接头人「灰隼」，格雷斯顿来的信使。
+接头暗号你记着：上句「雾里的灯」，下句「替谁亮着」。
+这张图太要紧，递错了手，便是亲手替敌人铸了利器——交出去之前，总得把人看准。
+-&gt; 出发前
+
+=== 出发前 ===
+{ once("进门之前，趁手的东西还能再看一眼。") }
+* {!know_geo} [摊开随身的地图]
+&gt; 你借灯影摊开那张油布地图。海岸线上一串港埠：铅口、索尔兹比、雾港，挨着浪头排开。
+&gt; 铁路从雾港一路往内陆钻，越铺越高，扎进群山，尽头才落到格雷斯顿；再往里是焦炭岭和灰背山，地图边角都快盛不下。
+&gt; 你把这些方位在心里默记了一遍，收起地图。
+&gt; ~ know_geo = true
+&gt; -&gt; 出发前
+* {!know_seal} [翻开那本简易魔法手册]
+&gt; 手册前几页画着以太术士的随身行头，一样样列着——
+&gt; 「行会符印」：认证文书用的火漆印，凑近火苗，纹路里会浮起一层灰光。
+&gt; 「以太罗盘」：黄铜怀表式罗盘，跑长途的信使人手一只。
+&gt; 「以太蜡」：封口封管用，遇热回软，凉透了比火漆还硬。
+&gt; 「灰玻璃片」：隔着它看以太，能看出旁人看不见的纹路。
+&gt; 你把这几样的模样记在心里，将手册塞回怀里。
+&gt; ~ know_seal = true
+&gt; -&gt; 出发前
+* [收好东西，推开锈锚酒馆的门] -&gt; 入座
+
+=== 入座 ===
+@bg_show("assets/tavern_interior.jpg")
+
+暖气和劣酒味一下子糊在脸上。屋角壁炉噼啪响，墙上挂着一盏以太长明灯。
+靠墙的角落里坐着个穿灰呢大衣的男人，膝上搁着一只空木匣——等着装你那只铜管。他抬眼看你。
+「雾里的灯，」你低声道。
+「替谁亮着。」他接得分毫不差。
+暗号是对上了。你在他对面坐下。老板在吧台后擦着杯子。
+-&gt; 酒馆闲谈
+
+=== 酒馆闲谈 ===
+{ once("递铜管之前，不妨先在桌上消磨片刻。") }
+
+* {!know_compass} [跟老板聊聊这鬼天气]
+&gt; 「雾港的雾不寻常。」老板擦着杯子，「水手都说，罗盘一进这片雾就找不着北，指针直打转，古怪得很。」
+&gt; ~ know_compass = true
+&gt; -&gt; 酒馆闲谈
+* {!know_mark} [跟老板攀谈，问问他的来历]
+&gt; 「我？格雷斯顿人。」老板摊开两手给你看，掌沿和虎口尽是老茧与暗红的烫疤，「打小在炉边抡锤——那地方长大的孩子，没一双手是干净的。打铁是刻进骨子里的本行，生来就躲不掉。」
+&gt; ~ know_mark = true
+&gt; -&gt; 酒馆闲谈
+* [请对面这位喝一杯]
+&gt; 你抬手要了两杯麦酒。他道了声谢，接过去抿了一口，又搁下了——不过是些无关紧要的寒暄。
+&gt; -&gt; 酒馆闲谈
+* [收起寒暄，开始盘问] -&gt; 盘问
+
+=== 盘问 ===
+{ once("你把话头收住，目光落到他身上。") }
+@if {asked &gt;= 3}
+&gt; 他靠回椅背，神色冷了几分。「问得够多了，先生。」一只手按上桌角的木匣，「交，还是不交——你该拿个主意了。」
+
+* {know_geo &amp;&amp; asked &lt; 3} [问他这一路是怎么来雾港的]
+&gt; 「从格雷斯顿到雾港，路可不近。你这一路，是怎么过来的？」
+&gt; @if {imposter === 1}
+&gt; &gt; 「走水路，」他说，「从家门口搭的船，海上颠了两天，才晃到这儿。」
+&gt; &gt; ~ suspicion++
+&gt; @else
+&gt; &gt; 「铁路从山里一路坐下来，到了山脚再换马车，」他说，「打格雷斯顿到海边，足足折腾了一整天。」
+&gt; ~ asked++
+&gt; -&gt; 盘问
+* {know_compass &amp;&amp; asked &lt; 3} [问他在这片雾里是怎么寻到路的]
+&gt; 「雾港的雾你也领教了。两眼一抹黑的，你是怎么寻到这家店的？」
+&gt; @if {imposter === 1}
+&gt; &gt; 「靠行会那只罗盘呗。」他拍了拍怀表袋，「针一路指得准，照着走就到了。」
+&gt; &gt; ~ suspicion++
+&gt; @else
+&gt; &gt; 「罗盘？」他短促地笑了一声，「那东西一进雾就跟着了魔似的乱转。我是一路问着道、摸过来的。」
+&gt; ~ asked++
+&gt; -&gt; 盘问
+* {know_mark &amp;&amp; asked &lt; 3} [借斟酒的工夫，留意他的手]
+&gt; 你不动声色，打量起他搁在桌沿的那只手。
+&gt; @if {imposter === 1}
+&gt; &gt; 也是双粗手，可茧子结在指节与掌心，是常年攥惯了刀枪磨出来的——半点炉火溅出的烫疤都没有。
+&gt; &gt; ~ suspicion++
+&gt; @else
+&gt; &gt; 掌沿一圈厚茧，虎口几处暗红的旧烫疤，是常年握锤打铁、被火星子燎出来的手。
+&gt; ~ asked++
+&gt; -&gt; 盘问
+* {know_seal &amp;&amp; asked &lt; 3} [借桌上的烛火，验那枚符印]
+&gt; 你借烛火凑近木匣扣着的行会符印。火苗一近，一层灰光顺着纹路浮了上来，匀匀地泛着。
+&gt; ~ asked++
+&gt; -&gt; 盘问
+
+* [把铜管推过去——交出设计图] -&gt; 交付
+* [借口再想想，起身离座——先不交] -&gt; 拒付
+
+=== 交付 ===
+@if {imposter === 1}
+&gt; -&gt; 为渊驱鱼
+@else
+&gt; -&gt; 送达
+
+=== 拒付 ===
+@if {imposter === 1}
+&gt; -&gt; 雾里识隼
+@else
+&gt; -&gt; 错付
+
+=== 送达 ===
+你把铜管推过桌面。他验过蜡封，郑重地收进木匣，扣上。
+「替谁亮着，」他低声把那句下半句又念了一遍，像是说给某个不在场的人听，「这一次，掌灯的人没有白等。」
+他起身没入雾里。设计图上路了，去它该去的地方。雾港的夜还长——至少今夜，你交对了人。
+-&gt; END
+
+=== 错付 ===
+你终究没把铜管递出去。
+他看了你良久，眼里掠过一丝你读不懂的东西——失望，或只是疲惫。他默默扣上空匣，起身。
+「替谁亮着……今晚怕是没人来接这盏灯了。」他没入门外的雾里，脚步声很快被吞没。
+后来你才听说，那确是真灰隼。设计图烂在你手里，那台机关，再没能造出来。有些谨慎，代价是错过。
+-&gt; END
+
+=== 为渊驱鱼 ===
+你把铜管推过桌面。他接过去，蜡封在他指间一捻就开了——熟练得不像第一回。
+@if {suspicion &gt;= 1}
+&gt; 那些疑点你不是没看见，可你还是把它推了过去。
+他冲你一笑，那笑里没有半分接头人的拘谨。木匣扣上，人已起身，转眼没入雾里。
+设计图到了不该到的手里。用不了多久，以太工程院的心血，会变成对着工程院开火的东西。
+-&gt; END
+
+=== 雾里识隼 ===
+@bg_hide()
+你终究没把铜管递出去，只淡淡丢下一句「今夜怕是接不成头了」。
+他眯眼盯了你一瞬，忽地起身，把空匣塞进怀里，没等你开口便挤进了人群。门开了一线，雾涌进来，又把他卷了出去。
+真正的接头人绝不会丢下接头就走。你攥紧怀里的铜管——它还在你手里。这一次，设计图没有泄露出去。
+-&gt; END</code></pre>
+<hr>
+<p>*v0.1.0 草案结束。*</p>
+    </article>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kiny · 开源</span>
+    <span><a href="https://github.com/firzencode/kiny">GitHub</a> · <a href="https://github.com/firzencode/kiny/releases">下载</a></span>
+  </div>
+</footer>
+</body>
+</html>

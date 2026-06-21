@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiny — 用纯文本写互动小说</title>
+<meta name="description" content="Kiny 是一种写互动小说的标记语言，配套引擎、阅读器和编辑器。故事是 .kin 纯文本文件，用选项和条件写出分支。受 Ink 启发，对中文友好。">
+<link rel="icon" href="assets/app-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EAD2;
+    --paper-2:#EDE0C2;
+    --paper-3:#F7F0DE;
+    --paper-edge:#E2D2AC;
+    --navy:#1E3A5F;
+    --navy-deep:#16304E;
+    --navy-2:#20385C;
+    --ink:#23364d;
+    --gold:#C9A24B;
+    --gold-soft:#D4AF6A;
+    --gold-deep:#B8893B;
+    --fog:#1a2a38;
+    --fog-deep:#0f1b26;
+    --lamp:#e9a94e;
+
+    --serif:"Fraunces", Georgia, "Songti SC", serif;
+    --reader:"Newsreader", Georgia, "Songti SC", "STSong", serif;
+    --sans:"Inter","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+    --maxw:1140px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    font-variant-ligatures:none;
+    font-feature-settings:"liga" 0, "calt" 0;
+    overflow-x:hidden;
+  }
+  pre,code,.kc{font-variant-ligatures:none;font-feature-settings:"liga" 0, "calt" 0;}
+  ::selection{background:var(--gold-soft);color:var(--navy-deep);}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  p{text-wrap:pretty;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 40px;}
+
+  .eyebrow{
+    font-family:var(--sans);font-size:12.5px;letter-spacing:.34em;
+    text-transform:uppercase;font-weight:600;color:var(--gold-deep);
+  }
+  h1,h2,h3{font-family:var(--serif);font-weight:500;color:var(--navy-deep);line-height:1.12;margin:0;}
+  h2{font-size:clamp(28px,3.3vw,40px);letter-spacing:-.01em;}
+  .section-head{max-width:680px;margin-bottom:44px;}
+  .section-head .eyebrow{display:block;margin-bottom:16px;}
+  .section-head p.lede{font-size:18px;color:#4a566a;margin:16px 0 0;}
+
+  section{padding:92px 0;position:relative;}
+  code.kc{font-family:var(--mono);font-size:.85em;color:var(--gold-deep);}
+
+  /* framed screenshot */
+  .shot{max-width:1000px;margin:0 auto;border-radius:14px;overflow:hidden;border:1px solid var(--paper-edge);box-shadow:0 38px 90px -38px rgba(22,48,78,.5);}
+  .shot .bar{display:flex;align-items:center;gap:7px;padding:11px 16px;background:var(--paper-2);border-bottom:1px solid var(--paper-edge);}
+  .shot .bar i{width:10px;height:10px;border-radius:50%;background:#c9b489;display:block;}
+  .shot .bar i:nth-child(1){background:#d68b6a;}
+  .shot .bar span{font-family:var(--mono);font-size:12px;color:#6a7384;margin-left:6px;}
+  .shot img{width:100%;display:block;background:#0d1117;}
+  .shot-cap{text-align:center;font-size:13.5px;color:#6a7384;margin:16px auto 0;}
+
+  /* ════════ NAV ════════ */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(244,234,210,.86);
+    backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:1px solid var(--paper-edge);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px;}
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--serif);font-weight:600;font-size:21px;color:var(--navy-deep);}
+  .brand img{width:34px;height:34px;border-radius:8px;box-shadow:0 1px 0 rgba(255,255,255,.6),0 3px 10px rgba(30,58,95,.18);}
+  .navlinks{display:flex;gap:12px;align-items:center;font-size:14.5px;font-weight:500;}
+  .navlinks a{padding:7px 16px;border-radius:999px;transition:all .2s;color:#3d4a5e;}
+  .navlinks a:hover{color:var(--gold-deep);}
+  .navlinks a.ghbtn{border:1px solid var(--navy);color:var(--navy);}
+  .navlinks a.ghbtn:hover{background:var(--navy);color:var(--paper-3);}
+
+  /* ════════ HERO · 金色故事光路 ════════ */
+  @keyframes fluidflow{
+    0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}
+  }
+  .hero{position:relative;overflow:hidden;background:var(--paper-3);padding:78px 0 96px;}
+  .hero__fluid{
+    position:absolute;inset:-14% -10% auto -10%;height:135%;z-index:0;
+    background:linear-gradient(108deg,
+      #F8F1E0 0%,#F3E7CA 16%,#E8D2A0 29%,#D9B978 40%,#CCA451 50%,
+      #BE9540 59%,#8a99a2 72%,#4a6178 83%,#28405f 93%,#1c3454 100%);
+    background-size:240% 240%;
+    animation:fluidflow 30s ease-in-out infinite;
+    clip-path:polygon(0 0, 100% 0, 100% 80%, 0 100%);
+    opacity:.92;
+  }
+  .hero__rays{
+    position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;
+    background:
+      radial-gradient(120% 70% at 72% 118%, rgba(255,244,214,.55), transparent 56%),
+      radial-gradient(46% 64% at 60% 100%, rgba(233,196,120,.55), transparent 62%),
+      radial-gradient(40% 60% at 84% 104%, rgba(244,228,180,.42), transparent 60%);
+    clip-path:polygon(0 0, 100% 0, 100% 80%, 0 100%);
+  }
+  .hero__grain{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background-image:radial-gradient(rgba(30,58,95,.045) 1px, transparent 1px);
+    background-size:4px 4px;clip-path:polygon(0 0, 100% 0, 100% 80%, 0 100%);
+  }
+  .hero .wrap{position:relative;z-index:3;display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center;}
+  .hero-copy .eyebrow{margin-bottom:22px;display:block;color:var(--gold-deep);}
+  .hero h1{font-size:clamp(42px,5vw,64px);font-weight:600;letter-spacing:-.01em;color:var(--navy-deep);}
+  .hero .sub{font-size:18.5px;color:#3f4d63;max-width:494px;margin:24px 0 34px;}
+  .hero .sub b{color:var(--navy-deep);font-weight:600;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--sans);font-weight:600;font-size:15.5px;
+    padding:13px 26px;border-radius:999px;cursor:pointer;border:1px solid transparent;
+    transition:transform .18s ease, box-shadow .2s ease, background .2s;
+  }
+  .btn-primary{background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep));color:#2c2008;box-shadow:0 12px 30px -8px rgba(184,137,59,.5);border:1px solid rgba(255,255,255,.28);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 38px -8px rgba(184,137,59,.6);}
+  .btn-primary .arr{color:var(--navy-deep);}
+  .btn-ghost{background:rgba(247,240,222,.5);color:var(--navy-deep);border-color:rgba(30,58,95,.32);backdrop-filter:blur(3px);}
+  .btn-ghost:hover{border-color:var(--gold-deep);color:var(--gold-deep);background:rgba(247,240,222,.85);}
+
+  .hero-art{position:relative;}
+  .hero-art .frame{
+    position:relative;border-radius:14px;overflow:hidden;
+    box-shadow:0 36px 80px -30px rgba(22,48,78,.6), 0 2px 0 rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.45);
+  }
+  .hero-art .frame img{width:100%;background:var(--paper-3);}
+  .hero-art .tag{
+    position:absolute;left:-14px;bottom:24px;
+    background:var(--paper-3);color:var(--navy-deep);border:1px solid var(--gold-soft);
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    padding:8px 14px;border-radius:8px;box-shadow:0 14px 30px -10px rgba(30,58,95,.5);
+  }
+  .hero-art .tag b{color:var(--gold-deep);}
+
+  /* ════════ 示例：雾港之夜 ════════ */
+  .demo{background:var(--fog-deep);color:#cdd9e4;padding:0;}
+  .demo-band{
+    position:relative;
+    background-image:linear-gradient(180deg, rgba(15,27,38,.66), rgba(15,27,38,.9)), url("assets/harbor_fog.jpg");
+    background-size:cover;background-position:center;
+  }
+  .demo-band::after{content:"";position:absolute;inset:0;box-shadow:inset 0 80px 80px -40px rgba(15,27,38,.9), inset 0 -80px 80px -40px rgba(15,27,38,.95);pointer-events:none;}
+  .demo-inner{position:relative;z-index:2;padding:96px 0;}
+  .demo .eyebrow{color:var(--lamp);}
+  .demo-head{max-width:620px;margin-bottom:40px;}
+  .demo-head h2{color:#f1ece1;}
+  .demo-head p{color:#a9bccb;font-size:18px;margin-top:16px;}
+
+  .story-card{
+    max-width:900px;margin:0 auto;
+    background:rgba(244,237,225,.98);color:#26323f;
+    border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,75,.4);
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.7);
+    display:grid;grid-template-columns:.9fr 1.1fr;
+  }
+  .story-card .cover{
+    position:relative;min-height:320px;
+    background-image:linear-gradient(180deg, rgba(20,16,10,.18), rgba(20,16,10,.55)), url("assets/tavern_interior.jpg");
+    background-size:cover;background-position:center;
+  }
+  .story-card .cover .quote{
+    position:absolute;left:26px;right:26px;bottom:24px;
+    font-family:var(--reader);font-style:italic;font-size:16px;line-height:1.7;color:#f4ecdd;
+    text-shadow:0 2px 12px rgba(0,0,0,.7);
+  }
+  .story-card .body{padding:40px 42px;display:flex;flex-direction:column;}
+  .story-card .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-deep);}
+  .story-card h3{font-size:28px;margin:12px 0 14px;}
+  .story-card p{font-size:16px;color:#46525f;margin:0 0 14px;}
+  .story-card .meta{font-size:14px;color:#6a7384;margin:0 0 26px;}
+  .story-card .go{margin-top:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .story-card .note{font-size:13px;color:#7a8493;}
+
+  /* ════════ FEATURES ════════ */
+  .features{background:var(--paper-3);border-top:1px solid var(--paper-edge);border-bottom:1px solid var(--paper-edge);}
+  .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border:1px solid var(--paper-edge);border-radius:14px;overflow:hidden;background:var(--paper);margin-top:56px;}
+  .feat{padding:36px 40px;position:relative;border-right:1px solid var(--paper-edge);border-bottom:1px solid var(--paper-edge);}
+  .feat:nth-child(2n){border-right:none;}
+  .feat:nth-child(n+3){border-bottom:none;}
+  .feat .idx{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--gold-deep);}
+  .feat h3{font-size:22px;margin:12px 0 10px;}
+  .feat p{font-size:15.5px;color:#4f5a6c;margin:0;}
+
+  /* ════════ CODE / .kin ════════ */
+  .kin .wrap{position:relative;z-index:1;}
+  .kin-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:stretch;}
+  .codecard{background:var(--navy-deep);border-radius:14px;overflow:hidden;box-shadow:0 30px 70px -34px rgba(22,48,78,.6);border:1px solid #25405f;}
+  .code-top{display:flex;align-items:center;gap:9px;padding:13px 18px;background:#15293f;border-bottom:1px solid #25405f;}
+  .code-top .fname{font-family:var(--mono);font-size:13px;color:#a9c2dc;}
+  .code-top .fname b{color:var(--gold-soft);}
+  .code-top .dots{display:flex;gap:6px;margin-right:4px;}
+  .code-top .dots i{width:10px;height:10px;border-radius:50%;background:#37557a;display:block;}
+  pre{margin:0;padding:26px 24px;font-family:var(--mono);font-size:14px;line-height:1.95;color:#d6e2ee;overflow-x:auto;tab-size:2;}
+  .k-knot{color:var(--gold-soft);font-weight:500;}
+  .k-star{color:#e08f6a;}
+  .k-cond{color:#7fb0c9;}
+  .k-arrow{color:var(--gold);}
+  .k-var{color:#9bcf8f;}
+  .k-text{color:#aeb9c6;}
+
+  .runcard{background:var(--paper-3);border-radius:14px;border:1px solid var(--paper-edge);box-shadow:0 18px 50px -30px rgba(30,58,95,.4);padding:30px 30px;display:flex;flex-direction:column;}
+  .runcard .runlabel{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:18px;}
+  .runcard .run-prose{font-family:var(--reader);font-size:17px;line-height:1.8;color:#37414f;margin:0 0 20px;}
+  .runcard .run-choice{font-family:var(--reader);font-size:16.5px;color:var(--navy-deep);border:1px solid var(--paper-edge);border-left:3px solid var(--gold);background:var(--paper);padding:12px 16px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+  .runcard .run-choice .c{font-family:var(--mono);font-size:11px;color:var(--gold-deep);}
+  .runcard .map{margin-top:auto;padding-top:20px;border-top:1px dashed var(--paper-edge);font-size:13.5px;color:#6a7384;}
+  .runcard .map code{font-family:var(--mono);color:var(--navy-deep);background:var(--paper-2);padding:1px 6px;border-radius:4px;font-size:12.5px;}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:32px;font-family:var(--mono);font-size:12.5px;color:#5b6678;}
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block;}
+
+  /* ════════ TOOLS ════════ */
+  .eco{background:var(--paper);}
+  .eco-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:52px;}
+  .eco-card{background:var(--paper-3);border:1px solid var(--paper-edge);border-radius:13px;padding:26px 26px;transition:transform .2s, box-shadow .2s, border-color .2s;}
+  .eco-card:hover{transform:translateY(-4px);box-shadow:0 20px 44px -26px rgba(30,58,95,.4);border-color:var(--gold-soft);}
+  .eco-card .pin{font-family:var(--mono);font-size:11px;color:var(--gold-deep);letter-spacing:.1em;}
+  .eco-card h3{font-size:20px;margin:11px 0 9px;display:flex;align-items:center;gap:9px;}
+  .eco-card p{font-size:14.5px;color:#4f5a6c;margin:0;}
+  .soon{font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--gold-deep);border:1px solid var(--gold-soft);border-radius:999px;padding:1px 9px;}
+
+  /* ════════ ROADMAP ════════ */
+  .road{background:var(--paper-3);border-top:1px solid var(--paper-edge);border-bottom:1px solid var(--paper-edge);}
+  .road-tags{display:flex;flex-wrap:wrap;gap:14px;}
+  .road-tag{display:flex;align-items:center;gap:11px;padding:15px 22px;border:1px solid var(--paper-edge);border-radius:12px;background:var(--paper);font-size:16px;color:var(--navy-deep);}
+  .road-tag .m{font-family:var(--mono);font-size:12px;color:var(--gold-deep);}
+
+  /* ════════ DOWNLOAD ════════ */
+  .download{background:var(--navy-deep);color:#d7e3ef;position:relative;overflow:hidden;text-align:center;}
+  .download::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 420px at 50% -10%, rgba(201,162,75,.16), transparent 60%);}
+  .download .wrap{position:relative;z-index:1;}
+  .download .eyebrow{color:var(--gold-soft);}
+  .download h2{color:#f3ede2;margin-top:14px;}
+  .download p{max-width:580px;margin:18px auto 32px;color:#aec3d8;font-size:17px;}
+  .dl-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .download .btn-line{display:inline-flex;align-items:center;gap:9px;color:#cfe0f0;border:1px solid #3a5a80;padding:13px 24px;border-radius:999px;font-weight:600;font-size:15.5px;transition:border-color .2s;}
+  .download .btn-line:hover{border-color:var(--gold-soft);}
+
+  /* ════════ FOOTER ════════ */
+  footer{background:var(--paper-2);border-top:1px solid var(--paper-edge);padding:40px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
+  .foot-brand{display:flex;align-items:center;gap:13px;}
+  .foot-brand img{width:40px;height:40px;border-radius:9px;box-shadow:0 3px 10px rgba(30,58,95,.2);}
+  .foot-brand .ft-name{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--navy-deep);}
+  .foot-brand .ft-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;color:var(--gold-deep);text-transform:uppercase;margin-top:2px;}
+  .foot-right{display:flex;align-items:center;gap:26px;font-size:14.5px;color:#46526a;}
+  .foot-right a:hover{color:var(--gold-deep);}
+  .foot-right .sep{color:#b9aa82;}
+  .foot-copy{max-width:var(--maxw);margin:24px auto 0;padding:20px 40px 0;border-top:1px solid var(--paper-edge);font-size:13px;color:#7a8394;}
+
+  /* reveal */
+  .js .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease;}
+  .js .reveal.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none;}}
+
+  @media (max-width:900px){
+    .hero{padding:46px 0 80px;}
+    .hero .wrap,.kin-grid{grid-template-columns:1fr;}
+    .hero-art{order:-1;}
+    .story-card{grid-template-columns:1fr;}
+    .story-card .cover{min-height:200px;}
+    .feat-grid{grid-template-columns:1fr;}
+    .feat:nth-child(n){border-right:none;}
+    .feat:nth-child(3){border-bottom:1px solid var(--paper-edge);}
+    .eco-grid{grid-template-columns:1fr 1fr;}
+    .navlinks a:not(.ghbtn){display:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
+    <div class="navlinks">
+      <a href="#demo">示例</a>
+      <a href="syntax.html">语法</a>
+      <a href="about.html">关于</a>
+      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+      <a class="ghbtn" href="https://github.com/firzencode/kiny">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero__fluid"></div>
+  <div class="hero__rays"></div>
+  <div class="hero__grain"></div>
+  <div class="wrap">
+    <div class="hero-copy reveal in">
+      <span class="eyebrow">Interactive Fiction Engine</span>
+      <h1>用纯文本<br>写互动小说</h1>
+      <p class="sub">Kiny 是一种写互动小说的标记语言，配套引擎、阅读器和编辑器。故事是 <code class="kc">.kin</code> 纯文本文件，用选项和条件写出分支，<b>读者的选择决定走向</b>。对中文友好，跨平台。</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#demo">示例故事《雾港之夜》 <span class="arr">↓</span></a>
+        <a class="btn btn-ghost" href="https://github.com/firzencode/kiny/releases">下载编辑器与阅读器</a>
+      </div>
+    </div>
+    <div class="hero-art reveal in">
+      <div class="frame">
+        <img src="assets/banner.png" alt="Kiny">
+      </div>
+      <div class="tag"><b>.kin</b> · 纯文本 · 开源</div>
+    </div>
+  </div>
+</header>
+
+<!-- 示例：雾港之夜 -->
+<section class="demo" id="demo">
+  <div class="demo-band">
+    <div class="demo-inner">
+      <div class="wrap">
+        <div class="demo-head reveal">
+          <span class="eyebrow">示例故事</span>
+          <h2>雾港之夜</h2>
+          <p>一个用 Kiny 写成的完整短篇，可以在浏览器里直接读。</p>
+        </div>
+        <div class="story-card reveal">
+          <div class="cover">
+            <p class="quote">「末班蒸汽船把你卸在雾港的栈桥上，转眼就被夜雾吞了。」</p>
+          </div>
+          <div class="body">
+            <span class="kicker">互动短篇</span>
+            <h3>港城雾夜，一桩隐秘的交接</h3>
+            <p>蒸汽朋克背景的港口之夜。你受以太工程院之托，要把一张图纸送到接头人「灰隼」手中——可来人未必可信。</p>
+            <p class="meta">在对话中观察、盘问，每一个选择都会改变故事的走向。</p>
+            <div class="go">
+              <a class="btn btn-primary" href="play/">开始阅读 <span class="arr">→</span></a>
+              <span class="note">无需安装，浏览器内运行。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">功能</span>
+      <h2>用一个纯文本文件，写出会分支的故事</h2>
+      <p class="lede">Kiny 把故事的文本、选项与状态写在同一份 <code class="kc">.kin</code> 文件里，并提供配套的编辑器即写即预览。</p>
+    </div>
+    <div class="shot reveal">
+      <div class="bar"><i></i><i></i><i></i><span>Kiny Editor</span></div>
+      <img src="assets/shot-editor.png" alt="Kiny 桌面编辑器界面">
+    </div>
+    <p class="shot-cap reveal">桌面编辑器 · 左侧资源树、中间编辑、右侧实时预览，底部即时语法与语义校验。</p>
+    <div class="feat-grid reveal">
+      <div class="feat">
+        <span class="idx">01</span>
+        <h3>分支选择</h3>
+        <p>用选项让读者做决定，不同选择通向不同的内容与结局。</p>
+      </div>
+      <div class="feat">
+        <span class="idx">02</span>
+        <h3>变量与条件</h3>
+        <p>记录读者经历过什么，据此显示或隐藏内容、改变后续走向。</p>
+      </div>
+      <div class="feat">
+        <span class="idx">03</span>
+        <h3>纯文本格式</h3>
+        <p>故事是 <code class="kc">.kin</code> 文本文件，可用任意编辑器编写，适合版本管理。</p>
+      </div>
+      <div class="feat">
+        <span class="idx">04</span>
+        <h3>中文与跨平台</h3>
+        <p>支持中文标点与中文标识符；浏览器、Windows、macOS 通用。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KIN CODE -->
+<section class="kin" id="kin">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">语法</span>
+      <h2>一段 .kin 源码</h2>
+      <p class="lede">左边是源码，右边是读者看到的内容。</p>
+    </div>
+    <div class="kin-grid reveal">
+      <div class="codecard">
+        <div class="code-top">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span class="fname">雾港之夜<b>.kin</b></span>
+        </div>
+<pre><span class="k-knot">=== 出发前 ===</span>
+<span class="k-star">*</span> <span class="k-cond">{!know_geo}</span> [摊开随身的地图]
+  <span class="k-text">&gt; 你借灯影摊开那张油布地图。</span>
+  <span class="k-text">&gt; 海岸线上一串港埠……</span>
+  <span class="k-text">&gt;</span> <span class="k-var">~ know_geo = true</span>
+  <span class="k-text">&gt;</span> <span class="k-arrow">-&gt; 出发前</span>
+<span class="k-star">*</span> [收好东西，推开锈锚酒馆的门] <span class="k-arrow">-&gt; 入座</span>
+</pre>
+      </div>
+      <div class="runcard">
+        <div class="runlabel">读者看到</div>
+        <p class="run-prose">在码头多停留片刻。要不要先理清这座雾城的地理，再推门进酒馆？</p>
+        <div class="run-choice"><span class="c">①</span>〔摊开随身的地图〕</div>
+        <div class="run-choice"><span class="c">②</span>〔收好东西，推开锈锚酒馆的门〕</div>
+        <div class="map">
+          <code>{!know_geo}</code> 让「看地图」只在没看过时出现；<code>~ know_geo = true</code> 记下状态，<code>-&gt; 出发前</code> 折返后该选项消失，<code>-&gt; 入座</code> 进入下一章。
+        </div>
+      </div>
+    </div>
+    <div class="legend reveal">
+      <span><i style="background:var(--gold-soft)"></i><span class="k-knot">=== 章节 ===</span> knot</span>
+      <span><i style="background:#e08f6a"></i><span class="k-star">*</span> 选项</span>
+      <span><i style="background:#7fb0c9"></i><span class="k-cond">{!cond}</span> 条件</span>
+      <span><i style="background:#9bcf8f"></i><span class="k-var">~ var =</span> 变量</span>
+      <span><i style="background:var(--gold)"></i><span class="k-arrow">-&gt;</span> 跳转</span>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="eco" id="tools">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">配套工具</span>
+      <h2>引擎、阅读器与编辑器</h2>
+      <p class="lede">同一份 <code class="kc">.kin</code> 故事，在下面这些工具里运行。</p>
+    </div>
+    <div class="shot reveal">
+      <div class="bar"><i></i><i></i><i></i><span>Kiny Reader · 雾港之夜</span></div>
+      <img src="assets/shot-reader.png" alt="Kiny 桌面阅读器阅读《雾港之夜》">
+    </div>
+    <p class="shot-cap reveal">桌面阅读器 · 沉浸阅读《雾港之夜》，正文与选项随场景呈现。</p>
+    <div class="eco-grid reveal">
+      <div class="eco-card">
+        <span class="pin">ENGINE</span>
+        <h3>引擎</h3>
+        <p>读 .kin、跑故事的核心：解析、静态检查、运行时与终端播放器。</p>
+      </div>
+      <div class="eco-card">
+        <span class="pin">WEB-READER</span>
+        <h3>网页阅读器</h3>
+        <p>浏览器里的阅读器，可构建成静态站点部署（本站示例即由它驱动）。</p>
+      </div>
+      <div class="eco-card">
+        <span class="pin">READER</span>
+        <h3>桌面阅读器</h3>
+        <p>基于 Tauri 2 的桌面端阅读器，用于离线阅读。</p>
+      </div>
+      <div class="eco-card">
+        <span class="pin">MOBILE READER</span>
+        <h3>移动端阅读器 <span class="soon">规划中</span></h3>
+        <p>在移动设备上阅读，随时随地继续未完的故事。</p>
+      </div>
+      <div class="eco-card">
+        <span class="pin">EDITOR</span>
+        <h3>桌面编辑器</h3>
+        <p>基于 Tauri 2 的桌面端编辑器，写 .kin 并即时预览。</p>
+      </div>
+      <div class="eco-card">
+        <span class="pin">MOBILE EDITOR</span>
+        <h3>移动端编辑器 <span class="soon">规划中</span></h3>
+        <p>在手机或平板上随手编写与修改 .kin 故事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="road" id="roadmap">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">路线图</span>
+      <h2>接下来的方向</h2>
+      <p class="lede">以下能力正在规划中。</p>
+    </div>
+    <div class="road-tags reveal">
+      <div class="road-tag"><span class="m">01</span>AI 功能支持</div>
+      <div class="road-tag"><span class="m">02</span>移动端编辑器</div>
+      <div class="road-tag"><span class="m">03</span>移动端阅读器</div>
+      <div class="road-tag"><span class="m">04</span>导出为网站</div>
+      <div class="road-tag"><span class="m">05</span>导出为桌面 App</div>
+      <div class="road-tag"><span class="m">06</span>导出为移动端 App</div>
+      <div class="road-tag"><span class="m">07</span>更多样式</div>
+      <div class="road-tag"><span class="m">···</span>以及更多</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="download" id="download">
+  <div class="wrap">
+    <span class="eyebrow">开源</span>
+    <h2>完全开源，即刻使用</h2>
+    <p>Kiny 完全开源，源码托管在 GitHub。桌面端编辑器与阅读器已可下载，无需自行构建。</p>
+    <div class="dl-row">
+      <a class="btn btn-primary" href="https://github.com/firzencode/kiny/releases">下载编辑器 &amp; 阅读器 <span>↗</span></a>
+      <a class="btn-line" href="https://github.com/firzencode/kiny">GitHub 仓库</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <img src="assets/app-icon.png" alt="Kiny">
+      <div>
+        <div class="ft-name">Kiny</div>
+        <div class="ft-tag">Interactive Fiction Engine</div>
+      </div>
+    </div>
+    <div class="foot-right">
+      <a href="https://github.com/firzencode/kiny">GitHub</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+    </div>
+  </div>
+  <div class="foot-copy">© 2026 Kiny · 开源</div>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12, rootMargin:"0px 0px -8% 0px"});
+  reveals.forEach(el=>io.observe(el));
+  window.addEventListener('load',()=>{ setTimeout(()=>reveals.forEach(el=>el.classList.add('in')),400); });
+</script>
+</body>
+</html>
