@@ -83,7 +83,10 @@
   @media (max-width:860px){
     .layout{grid-template-columns:1fr;gap:0;}
     .toc{display:none;}
-    .navlinks a:not(.ghbtn):not(.active){display:none;}
+    nav .wrap{padding:0 16px;}
+    .navlinks{gap:6px;}
+    .navlinks a{padding:6px 9px;font-size:13px;}
+    .navlinks a[href*="releases"]{display:none;}
   }
 </style>
 </head>

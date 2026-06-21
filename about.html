@@ -74,7 +74,12 @@
   footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:13.5px;color:#7a8394;}
   footer a{color:#46526a;}footer a:hover{color:var(--gold-deep);}
 
-  @media (max-width:860px){.navlinks a:not(.ghbtn):not(.active){display:none;}}
+  @media (max-width:860px){
+    nav .wrap{padding:0 16px;}
+    .navlinks{gap:6px;}
+    .navlinks a{padding:6px 9px;font-size:13px;}
+    .navlinks a[href*="releases"]{display:none;}
+  }
 </style>
 </head>
 <body>

@@ -285,7 +285,10 @@
     .feat:nth-child(n){border-right:none;}
     .feat:nth-child(3){border-bottom:1px solid var(--paper-edge);}
     .eco-grid{grid-template-columns:1fr 1fr;}
-    .navlinks a:not(.ghbtn){display:none;}
+    nav .wrap{padding:0 16px;}
+    .navlinks{gap:6px;}
+    .navlinks a{padding:6px 9px;font-size:13px;}
+    .navlinks a[href*="releases"]{display:none;}
   }
 </style>
 </head>
@@ -403,7 +406,7 @@
     <div class="section-head reveal">
       <span class="eyebrow">语法</span>
       <h2>一段 .kin 源码</h2>
-      <p class="lede">左边是源码，右边是读者看到的内容。</p>
+      <p class="lede">源码，对照它跑给读者看的样子。</p>
     </div>
     <div class="kin-grid reveal">
       <div class="codecard">
