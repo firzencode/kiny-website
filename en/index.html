@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kiny — 用纯文本写互动小说</title>
-<meta name="description" content="Kiny 是一种写互动小说的标记语言，配套引擎、阅读器和编辑器。故事是 .kin 纯文本文件，用选项和条件写出分支。受 Ink 启发，对中文友好。">
-<link rel="icon" href="assets/app-icon.png">
+<title>Kiny — write interactive fiction in plain text</title>
+<meta name="description" content="Kiny is a markup language for writing interactive fiction, with an engine, reader, and editor. Stories are .kin plain-text files that branch via choices and conditions. Inspired by Ink, friendly to Chinese.">
+<link rel="icon" href="../assets/app-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -160,7 +160,7 @@
   .demo{background:var(--fog-deep);color:#cdd9e4;padding:0;}
   .demo-band{
     position:relative;
-    background-image:linear-gradient(180deg, rgba(15,27,38,.66), rgba(15,27,38,.9)), url("assets/harbor_fog.webp");
+    background-image:linear-gradient(180deg, rgba(15,27,38,.66), rgba(15,27,38,.9)), url("../assets/harbor_fog.webp");
     background-size:cover;background-position:center;
   }
   .demo-band::after{content:"";position:absolute;inset:0;box-shadow:inset 0 80px 80px -40px rgba(15,27,38,.9), inset 0 -80px 80px -40px rgba(15,27,38,.95);pointer-events:none;}
@@ -179,7 +179,7 @@
   }
   .story-card .cover{
     position:relative;min-height:320px;
-    background-image:linear-gradient(180deg, rgba(20,16,10,.18), rgba(20,16,10,.55)), url("assets/tavern_interior.webp");
+    background-image:linear-gradient(180deg, rgba(20,16,10,.18), rgba(20,16,10,.55)), url("../assets/tavern_interior.webp");
     background-size:cover;background-position:center;
   }
   .story-card .cover .quote{
@@ -299,14 +299,14 @@
 <!-- NAV -->
 <nav>
   <div class="wrap">
-    <a class="brand" href="#top"><img src="assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
+    <a class="brand" href="#top"><img src="../assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
     <div class="navlinks">
-      <a href="#demo">示例</a>
-      <a href="syntax.html">语法</a>
-      <a href="about.html">关于</a>
-      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+      <a href="#demo">Examples</a>
+      <a href="../syntax.html">Syntax</a>
+      <a href="about.html">About</a>
+      <a href="https://github.com/firzencode/kiny/releases">Download</a>
       <a class="ghbtn" href="https://github.com/firzencode/kiny">GitHub</a>
-      <a class="lang" href="en/index.html">English</a>
+      <a class="lang" href="../index.html">中文</a>
     </div>
   </div>
 </nav>
@@ -319,18 +319,18 @@
   <div class="wrap">
     <div class="hero-copy reveal in">
       <span class="eyebrow">Interactive Fiction Engine</span>
-      <h1>用纯文本<br>写互动小说</h1>
-      <p class="sub">Kiny 是一种写互动小说的标记语言，配套引擎、阅读器和编辑器。故事是 <code class="kc">.kin</code> 纯文本文件，用选项和条件写出分支，<b>读者的选择决定走向</b>。对中文友好，跨平台。</p>
+      <h1>Write interactive fiction<br>in plain text</h1>
+      <p class="sub">Kiny is a markup language for writing interactive fiction, with an engine, reader, and editor. A story is a <code class="kc">.kin</code> plain-text file that branches via choices and conditions — <b>the reader's choices decide where it goes</b>. Cross-platform, and friendly to Chinese.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#demo">示例故事《雾港之夜》 <span class="arr">↓</span></a>
-        <a class="btn btn-ghost" href="https://github.com/firzencode/kiny/releases">下载编辑器与阅读器</a>
+        <a class="btn btn-primary" href="#demo">Sample story: Night at the Foggy Harbor <span class="arr">↓</span></a>
+        <a class="btn btn-ghost" href="https://github.com/firzencode/kiny/releases">Download the editor & reader</a>
       </div>
     </div>
     <div class="hero-art reveal in">
       <div class="frame">
-        <img src="assets/banner.webp" alt="Kiny">
+        <img src="../assets/banner.webp" alt="Kiny">
       </div>
-      <div class="tag"><b>.kin</b> · 纯文本 · 开源</div>
+      <div class="tag"><b>.kin</b> · plain text · open source</div>
     </div>
   </div>
 </header>
@@ -341,22 +341,22 @@
     <div class="demo-inner">
       <div class="wrap">
         <div class="demo-head reveal">
-          <span class="eyebrow">示例故事</span>
-          <h2>雾港之夜</h2>
-          <p>一个用 Kiny 写成的完整短篇，可以在浏览器里直接读。</p>
+          <span class="eyebrow">Sample story</span>
+          <h2>Night at the Foggy Harbor</h2>
+          <p>A complete short piece written in Kiny — read it right in your browser.</p>
         </div>
         <div class="story-card reveal">
           <div class="cover">
-            <p class="quote">「末班蒸汽船把你卸在雾港的栈桥上，转眼就被夜雾吞了。」</p>
+            <p class="quote">“The last steamer drops you on the foggy harbor's pier, and in a blink the night fog swallows it whole.”</p>
           </div>
           <div class="body">
-            <span class="kicker">互动短篇</span>
-            <h3>港城雾夜，一桩隐秘的交接</h3>
-            <p>蒸汽朋克背景的港口之夜。你受以太工程院之托，要把一张图纸送到接头人「灰隼」手中——可来人未必可信。</p>
-            <p class="meta">在对话中观察、盘问，每一个选择都会改变故事的走向。</p>
+            <span class="kicker">Interactive short</span>
+            <h3>A foggy harbor night, a secret handoff</h3>
+            <p>A steampunk harbor night. Commissioned by the Aether Engineering Academy, you must deliver a blueprint to a contact known as “Grey Falcon” — but the one who shows up may not be trustworthy.</p>
+            <p class="meta">Observe and probe in conversation; every choice changes where the story goes.</p>
             <div class="go">
-              <a class="btn btn-primary" href="play/">开始阅读 <span class="arr">→</span></a>
-              <span class="note">无需安装，浏览器内运行。</span>
+              <a class="btn btn-primary" href="../play/">Start reading <span class="arr">→</span></a>
+              <span class="note">No install — runs in the browser.</span>
             </div>
           </div>
         </div>
@@ -369,35 +369,35 @@
 <section class="features" id="features">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">功能</span>
-      <h2>用一个纯文本文件，写出会分支的故事</h2>
-      <p class="lede">Kiny 把故事的文本、选项与状态写在同一份 <code class="kc">.kin</code> 文件里，并提供配套的编辑器即写即预览。</p>
+      <span class="eyebrow">Features</span>
+      <h2>One plain-text file, a story that branches</h2>
+      <p class="lede">Kiny keeps a story's text, choices, and state in one <code class="kc">.kin</code> file, with a companion editor that previews as you write.</p>
     </div>
     <div class="shot reveal">
       <div class="bar"><i></i><i></i><i></i><span>Kiny Editor</span></div>
-      <img src="assets/shot-editor.webp" alt="Kiny 桌面编辑器界面">
+      <img src="../assets/shot-editor.webp" alt="Kiny desktop editor interface">
     </div>
-    <p class="shot-cap reveal">桌面编辑器 · 左侧资源树、中间编辑、右侧实时预览，底部即时语法与语义校验。</p>
+    <p class="shot-cap reveal">Desktop editor · file tree on the left, editing in the middle, live preview on the right, instant syntax and semantic checks at the bottom.</p>
     <div class="feat-grid reveal">
       <div class="feat">
         <span class="idx">01</span>
-        <h3>分支选择</h3>
-        <p>用选项让读者做决定，不同选择通向不同的内容与结局。</p>
+        <h3>Branching choices</h3>
+        <p>Let readers decide with choices; different picks lead to different content and endings.</p>
       </div>
       <div class="feat">
         <span class="idx">02</span>
-        <h3>变量与条件</h3>
-        <p>记录读者经历过什么，据此显示或隐藏内容、改变后续走向。</p>
+        <h3>Variables and conditions</h3>
+        <p>Track what the reader has been through, then show or hide content and steer what comes next.</p>
       </div>
       <div class="feat">
         <span class="idx">03</span>
-        <h3>纯文本格式</h3>
-        <p>故事是 <code class="kc">.kin</code> 文本文件，可用任意编辑器编写，适合版本管理。</p>
+        <h3>Plain-text format</h3>
+        <p>A story is a <code class="kc">.kin</code> text file — write it in any editor, friendly to version control.</p>
       </div>
       <div class="feat">
         <span class="idx">04</span>
-        <h3>中文与跨平台</h3>
-        <p>支持中文标点与中文标识符；浏览器、Windows、macOS 通用。</p>
+        <h3>Chinese & cross-platform</h3>
+        <p>Supports Chinese punctuation and Chinese identifiers; works in the browser, on Windows, and macOS.</p>
       </div>
     </div>
   </div>
@@ -407,39 +407,39 @@
 <section class="kin" id="kin">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">语法</span>
-      <h2>一段 .kin 源码</h2>
-      <p class="lede">源码，对照它跑给读者看的样子。</p>
+      <span class="eyebrow">Syntax</span>
+      <h2>A piece of .kin source</h2>
+      <p class="lede">The source, side by side with how it plays for the reader.</p>
     </div>
     <div class="kin-grid reveal">
       <div class="codecard">
         <div class="code-top">
           <span class="dots"><i></i><i></i><i></i></span>
-          <span class="fname">雾港之夜<b>.kin</b></span>
+          <span class="fname">foggy-harbor<b>.kin</b></span>
         </div>
-<pre><span class="k-knot">=== 出发前 ===</span>
-<span class="k-star">*</span> <span class="k-cond">{!know_geo}</span> [摊开随身的地图]
-  <span class="k-text">&gt; 你借灯影摊开那张油布地图。</span>
-  <span class="k-text">&gt; 海岸线上一串港埠……</span>
+<pre><span class="k-knot">=== before_setting_out ===</span>
+<span class="k-star">*</span> <span class="k-cond">{!know_geo}</span> [Spread out the map you carry]
+  <span class="k-text">&gt; By lamplight you unfold the oilcloth map.</span>
+  <span class="k-text">&gt; A string of ports along the coastline…</span>
   <span class="k-text">&gt;</span> <span class="k-var">~ know_geo = true</span>
-  <span class="k-text">&gt;</span> <span class="k-arrow">-&gt; 出发前</span>
-<span class="k-star">*</span> [收好东西，推开锈锚酒馆的门] <span class="k-arrow">-&gt; 入座</span>
+  <span class="k-text">&gt;</span> <span class="k-arrow">-&gt; before_setting_out</span>
+<span class="k-star">*</span> [Pack up and push open the Rusty Anchor's door] <span class="k-arrow">-&gt; sit_down</span>
 </pre>
       </div>
       <div class="runcard">
-        <div class="runlabel">读者看到</div>
-        <p class="run-prose">在码头多停留片刻。要不要先理清这座雾城的地理，再推门进酒馆？</p>
-        <div class="run-choice"><span class="c">①</span>〔摊开随身的地图〕</div>
-        <div class="run-choice"><span class="c">②</span>〔收好东西，推开锈锚酒馆的门〕</div>
-        <div class="map"><code>{!know_geo}</code> 让「看地图」只在没看过时出现；<code>~ know_geo = true</code> 记下状态，<code>-&gt; 出发前</code> 折返后该选项消失，<code>-&gt; 入座</code> 进入下一章。</div>
+        <div class="runlabel">The reader sees</div>
+        <p class="run-prose">Linger a moment on the docks. Get your bearings in this foggy city first, or push straight into the tavern?</p>
+        <div class="run-choice"><span class="c">①</span>[ Spread out the map you carry ]</div>
+        <div class="run-choice"><span class="c">②</span>[ Pack up and push open the Rusty Anchor's door ]</div>
+        <div class="map"><code>{!know_geo}</code> makes “look at the map” appear only when you haven't yet; <code>~ know_geo = true</code> records the state, <code>-&gt; before_setting_out</code> loops back so the option disappears, and <code>-&gt; sit_down</code> moves to the next chapter.</div>
       </div>
     </div>
     <div class="legend reveal">
-      <span><i style="background:var(--gold-soft)"></i><span class="k-knot">=== 章节 ===</span> knot</span>
-      <span><i style="background:#e08f6a"></i><span class="k-star">*</span> 选项</span>
-      <span><i style="background:#7fb0c9"></i><span class="k-cond">{!cond}</span> 条件</span>
-      <span><i style="background:#9bcf8f"></i><span class="k-var">~ var =</span> 变量</span>
-      <span><i style="background:var(--gold)"></i><span class="k-arrow">-&gt;</span> 跳转</span>
+      <span><i style="background:var(--gold-soft)"></i><span class="k-knot">=== chapter ===</span> knot</span>
+      <span><i style="background:#e08f6a"></i><span class="k-star">*</span> choice</span>
+      <span><i style="background:#7fb0c9"></i><span class="k-cond">{!cond}</span> condition</span>
+      <span><i style="background:#9bcf8f"></i><span class="k-var">~ var =</span> variable</span>
+      <span><i style="background:var(--gold)"></i><span class="k-arrow">-&gt;</span> divert</span>
     </div>
   </div>
 </section>
@@ -448,45 +448,45 @@
 <section class="eco" id="tools">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">配套工具</span>
-      <h2>引擎、阅读器与编辑器</h2>
-      <p class="lede">同一份 <code class="kc">.kin</code> 故事，在下面这些工具里运行。</p>
+      <span class="eyebrow">Companion tools</span>
+      <h2>Engine, reader, and editor</h2>
+      <p class="lede">The same <code class="kc">.kin</code> story runs in the tools below.</p>
     </div>
     <div class="shot reveal">
-      <div class="bar"><i></i><i></i><i></i><span>Kiny Reader · 雾港之夜</span></div>
-      <img src="assets/shot-reader.webp" alt="Kiny 桌面阅读器阅读《雾港之夜》">
+      <div class="bar"><i></i><i></i><i></i><span>Kiny Reader · Night at the Foggy Harbor</span></div>
+      <img src="../assets/shot-reader.webp" alt="Kiny desktop reader reading Night at the Foggy Harbor">
     </div>
-    <p class="shot-cap reveal">桌面阅读器 · 沉浸阅读《雾港之夜》，正文与选项随场景呈现。</p>
+    <p class="shot-cap reveal">Desktop reader · immersive reading of Night at the Foggy Harbor, with prose and choices unfolding by scene.</p>
     <div class="eco-grid reveal">
       <div class="eco-card">
         <span class="pin">ENGINE</span>
-        <h3>引擎</h3>
-        <p>读 .kin、跑故事的核心：解析、静态检查、运行时与终端播放器。</p>
+        <h3>Engine</h3>
+        <p>The core that reads .kin and runs the story: parsing, static checks, runtime, and a terminal player.</p>
       </div>
       <div class="eco-card">
         <span class="pin">WEB-READER</span>
-        <h3>网页阅读器</h3>
-        <p>浏览器里的阅读器，可构建成静态站点部署（本站示例即由它驱动）。</p>
+        <h3>Web reader</h3>
+        <p>A reader in the browser that can be built into a static site (this site's demo is powered by it).</p>
       </div>
       <div class="eco-card">
         <span class="pin">READER</span>
-        <h3>桌面阅读器</h3>
-        <p>基于 Tauri 2 的桌面端阅读器，用于离线阅读。</p>
+        <h3>Desktop reader</h3>
+        <p>A Tauri 2 desktop reader for offline reading.</p>
       </div>
       <div class="eco-card">
         <span class="pin">MOBILE READER</span>
-        <h3>移动端阅读器 <span class="soon">规划中</span></h3>
-        <p>在移动设备上阅读，随时随地继续未完的故事。</p>
+        <h3>Mobile reader <span class="soon">Planned</span></h3>
+        <p>Read on mobile devices and pick up an unfinished story anytime, anywhere.</p>
       </div>
       <div class="eco-card">
         <span class="pin">EDITOR</span>
-        <h3>桌面编辑器</h3>
-        <p>基于 Tauri 2 的桌面端编辑器，写 .kin 并即时预览。</p>
+        <h3>Desktop editor</h3>
+        <p>A Tauri 2 desktop editor for writing .kin with instant preview.</p>
       </div>
       <div class="eco-card">
         <span class="pin">MOBILE EDITOR</span>
-        <h3>移动端编辑器 <span class="soon">规划中</span></h3>
-        <p>在手机或平板上随手编写与修改 .kin 故事。</p>
+        <h3>Mobile editor <span class="soon">Planned</span></h3>
+        <p>Write and revise .kin stories on a phone or tablet.</p>
       </div>
     </div>
   </div>
@@ -496,19 +496,19 @@
 <section class="road" id="roadmap">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">路线图</span>
-      <h2>接下来的方向</h2>
-      <p class="lede">以下能力正在规划中。</p>
+      <span class="eyebrow">Roadmap</span>
+      <h2>Where we're headed next</h2>
+      <p class="lede">The following capabilities are planned.</p>
     </div>
     <div class="road-tags reveal">
-      <div class="road-tag"><span class="m">01</span>AI 功能支持</div>
-      <div class="road-tag"><span class="m">02</span>移动端编辑器</div>
-      <div class="road-tag"><span class="m">03</span>移动端阅读器</div>
-      <div class="road-tag"><span class="m">04</span>导出为网站</div>
-      <div class="road-tag"><span class="m">05</span>导出为桌面 App</div>
-      <div class="road-tag"><span class="m">06</span>导出为移动端 App</div>
-      <div class="road-tag"><span class="m">07</span>更多样式</div>
-      <div class="road-tag"><span class="m">···</span>以及更多</div>
+      <div class="road-tag"><span class="m">01</span>AI support</div>
+      <div class="road-tag"><span class="m">02</span>Mobile editor</div>
+      <div class="road-tag"><span class="m">03</span>Mobile reader</div>
+      <div class="road-tag"><span class="m">04</span>Export as a website</div>
+      <div class="road-tag"><span class="m">05</span>Export as a desktop app</div>
+      <div class="road-tag"><span class="m">06</span>Export as a mobile app</div>
+      <div class="road-tag"><span class="m">07</span>More styles</div>
+      <div class="road-tag"><span class="m">···</span>and more</div>
     </div>
   </div>
 </section>
@@ -516,12 +516,12 @@
 <!-- DOWNLOAD -->
 <section class="download" id="download">
   <div class="wrap">
-    <span class="eyebrow">开源</span>
-    <h2>完全开源，即刻使用</h2>
-    <p>Kiny 完全开源，源码托管在 GitHub。桌面端编辑器与阅读器已可下载，无需自行构建。</p>
+    <span class="eyebrow">Open source</span>
+    <h2>Fully open source, ready to use</h2>
+    <p>Kiny is fully open source, hosted on GitHub. The desktop editor and reader are available to download — no need to build them yourself.</p>
     <div class="dl-row">
-      <a class="btn btn-primary" href="https://github.com/firzencode/kiny/releases">下载编辑器 &amp; 阅读器 <span>↗</span></a>
-      <a class="btn-line" href="https://github.com/firzencode/kiny">GitHub 仓库</a>
+      <a class="btn btn-primary" href="https://github.com/firzencode/kiny/releases">Download editor &amp; reader <span>↗</span></a>
+      <a class="btn-line" href="https://github.com/firzencode/kiny">GitHub repo</a>
     </div>
   </div>
 </section>
@@ -530,7 +530,7 @@
 <footer>
   <div class="wrap">
     <div class="foot-brand">
-      <img src="assets/app-icon.png" alt="Kiny">
+      <img src="../assets/app-icon.png" alt="Kiny">
       <div>
         <div class="ft-name">Kiny</div>
         <div class="ft-tag">Interactive Fiction Engine</div>
@@ -539,12 +539,12 @@
     <div class="foot-right">
       <a href="https://github.com/firzencode/kiny">GitHub</a>
       <span class="sep">·</span>
-      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+      <a href="https://github.com/firzencode/kiny/releases">Download</a>
       <span class="sep">·</span>
-      <a href="en/index.html">English</a>
+      <a href="../index.html">中文</a>
     </div>
   </div>
-  <div class="foot-copy">© 2026 Kiny · 开源</div>
+  <div class="foot-copy">© 2026 Kiny · Open source</div>
 </footer>
 
 <script>

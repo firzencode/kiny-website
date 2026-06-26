@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-Hans">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>关于 Kiny</title>
-<meta name="description" content="Kiny 受 Ink 启发、做得更简单；配套阅读器方便阅读、移动端编辑器方便编辑；规划中的原生 AI 让作者专注写作。">
-<link rel="icon" href="assets/app-icon.png">
+<title>About Kiny</title>
+<meta name="description" content="Inspired by Ink but made simpler; a companion reader for reading and a mobile editor for writing; planned native AI lets authors focus on the story.">
+<link rel="icon" href="../assets/app-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -87,68 +87,68 @@
 <body>
 <nav>
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
+    <a class="brand" href="index.html"><img src="../assets/app-icon.png" alt="Kiny"><span>Kiny</span></a>
     <div class="navlinks">
-      <a href="index.html#demo">示例</a>
-      <a href="syntax.html">语法</a>
-      <a class="active" href="about.html">关于</a>
-      <a href="https://github.com/firzencode/kiny/releases">下载</a>
+      <a href="index.html#demo">Examples</a>
+      <a href="../syntax.html">Syntax</a>
+      <a class="active" href="about.html">About</a>
+      <a href="https://github.com/firzencode/kiny/releases">Download</a>
       <a class="ghbtn" href="https://github.com/firzencode/kiny">GitHub</a>
-      <a class="lang" href="en/about.html">English</a>
+      <a class="lang" href="../about.html">中文</a>
     </div>
   </div>
 </nav>
 
 <header class="pagehead">
   <div class="wrap">
-    <a class="back" href="index.html">← 返回首页</a>
-    <span class="eyebrow">关于</span>
-    <h1>关于 Kiny</h1>
-    <p>用纯文本写互动小说的引擎与工具集——把写故事这件事，做得更简单一些。</p>
+    <a class="back" href="index.html">← Back to home</a>
+    <span class="eyebrow">About</span>
+    <h1>About Kiny</h1>
+    <p>An engine and toolset for writing interactive fiction in plain text — making storytelling a little simpler.</p>
   </div>
 </header>
 
 <article>
   <div class="sec">
-    <span class="eyebrow">缘起</span>
-    <h2>受 Ink 启发，做得更简单</h2>
-    <p>Kiny 受 <a href="https://www.inklestudios.com/ink/">Ink</a> 启发，沿用「用纯文本写分支叙事」的思路，但定位是一个更简洁的版本：砍掉面向游戏开发的高级特性（list、tunnel、thread、external function 等），只保留写故事真正需要的语法。一份 <code>.kin</code> 纯文本，就是一个会分岔的故事。</p>
-    <p>简单，不等于上限低。Kiny 把逻辑直接嵌入 JavaScript——只想讲故事的作者几乎不必碰它；而有编程能力的人，或是配合 AI Agent，用 JS 依然能写出复杂、充满想象力的游戏性内容。</p>
-    <p class="pull">既容得下最朴素的故事，也撑得起最复杂的想象。</p>
+    <span class="eyebrow">Origin</span>
+    <h2>Inspired by Ink, made simpler</h2>
+    <p>Kiny is inspired by <a href="https://www.inklestudios.com/ink/">Ink</a>, keeping the idea of "writing branching narrative in plain text," but aims to be a leaner version: it drops the game-development-oriented advanced features (lists, tunnels, threads, external functions, and so on) and keeps only the syntax that storytelling actually needs. A single <code>.kin</code> plain-text file is a story that branches.</p>
+    <p>Simple doesn't mean limited. Kiny embeds logic directly in JavaScript — authors who just want to tell a story rarely need to touch it, while those who can program, or who pair with an AI agent, can still write complex, imaginative, game-like content in JS.</p>
+    <p class="pull">Roomy enough for the plainest story, strong enough for the wildest imagination.</p>
   </div>
 
   <div class="sec">
-    <span class="eyebrow">不只是语言</span>
-    <h2>全平台的阅读与编辑工具</h2>
-    <p>写故事之外，读和改同样重要。Kiny 不止是一种标记语言，还带着一整套围绕 <code>.kin</code> 的工具，覆盖各个平台：</p>
+    <span class="eyebrow">More than a language</span>
+    <h2>Reading and editing tools on every platform</h2>
+    <p>Beyond writing, reading and revising matter just as much. Kiny is not only a markup language — it comes with a whole set of tools around <code>.kin</code>, across platforms:</p>
     <ul class="points">
       <li>
-        <b>全平台阅读器</b>
-        <span>浏览器、Windows、macOS 即开即读，移动端阅读器规划中——读者在任何设备上打开就能读，无需技术背景；选择会真实改变故事的走向与结局。</span>
+        <b>Cross-platform reader</b>
+        <span>Open and read instantly in the browser, on Windows and macOS, with a mobile reader planned — readers open it on any device with no technical background, and their choices genuinely change where the story goes and how it ends.</span>
       </li>
       <li>
-        <b>全平台编辑器 <span class="soon">移动端规划中</span></b>
-        <span>桌面端编辑器即写即预览；移动端编辑器规划中——无论在电脑、手机还是平板上，作者都能随手编写与修改故事。</span>
+        <b>Cross-platform editor <span class="soon">Mobile planned</span></b>
+        <span>The desktop editor previews as you write; a mobile editor is planned — on a computer, phone, or tablet, authors can write and revise stories anywhere.</span>
       </li>
     </ul>
   </div>
 
   <div class="sec">
-    <span class="eyebrow">规划中</span>
-    <h2>原生 AI，让作者专注写作</h2>
-    <p>Kiny 计划引入原生的 AI 支持，目标是让分工更清晰：<b>作者专注在故事的编排与写作上</b>，把润色文字、设计流程、套用模板这些偏程序的工作交给 AI。</p>
-    <p>把创作中真正需要人的部分留给作者，把可被自动化的部分交给机器——这是 Kiny 接下来想走的方向。</p>
+    <span class="eyebrow">Planned</span>
+    <h2>Native AI, so authors can focus on writing</h2>
+    <p>Kiny plans to introduce native AI support, aiming to make the division of labor clearer: <b>authors focus on shaping and writing the story</b>, while the more mechanical work — polishing prose, designing flow, applying templates — is handed to AI.</p>
+    <p>Leave to the author the parts of creation that truly need a human, and hand the automatable parts to the machine — that's the direction Kiny wants to take next.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="index.html#demo">读一个示例 <span>→</span></a>
-      <a class="btn btn-line" href="syntax.html">看看语法</a>
+      <a class="btn btn-primary" href="index.html#demo">Read an example <span>→</span></a>
+      <a class="btn btn-line" href="../syntax.html">See the syntax</a>
     </div>
   </div>
 </article>
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Kiny · 开源</span>
-    <span><a href="https://github.com/firzencode/kiny">GitHub</a> · <a href="https://github.com/firzencode/kiny/releases">下载</a></span>
+    <span>© 2026 Kiny · Open source</span>
+    <span><a href="https://github.com/firzencode/kiny">GitHub</a> · <a href="https://github.com/firzencode/kiny/releases">Download</a></span>
   </div>
 </footer>
 </body>
